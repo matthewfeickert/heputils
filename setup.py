@@ -18,9 +18,4 @@ extras_require["develop"] = sorted(
 )
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
 
-setup(
-    extras_require=extras_require,
-    entry_points={
-        "console_scripts": ["heputils=heputils.commandline:heputils"]
-    },
-)
+setup(extras_require=extras_require)
