@@ -2,18 +2,22 @@ from setuptools import setup
 
 extras_require = {}
 extras_require["lint"] = sorted(set(["pyflakes", "black"]))
-extras_require["develop"] = sorted(
+extras_require["test"] = sorted(
     set(
-        extras_require["lint"]
-        + [
+        [
             "check-manifest",
-            "pytest~=5.2",
+            "pytest~=6.0",
             "pytest-cov~=2.8",
             "pytest-console-scripts~=0.2",
-            "bumpversion~=0.5",
-            "pre-commit",
-            "twine",
-        ],
+            "pytest-mock~=3.0",
+        ]
+    )
+)
+extras_require["develop"] = sorted(
+    set(
+        extras_require["test"]
+        + extras_require["lint"]
+        + ["check-manifest", "bumpversion~=0.5", "pre-commit", "twine"]
     )
 )
 extras_require["complete"] = sorted(set(sum(extras_require.values(), [])))
