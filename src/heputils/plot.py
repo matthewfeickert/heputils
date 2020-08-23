@@ -5,6 +5,16 @@ from mplhep import histplot
 
 
 def stack_hist(hists, **kwargs):
+    """
+    Plot a stacked histogram of all the input histograms
+
+    Args:
+        hists (list): List of numpy arrays representing histograms
+        kwargs: Keyword arguments to matplotlib
+
+    Returns:
+        fig, ax: matplotlib subplot figure and axis objects
+    """
     if not isinstance(hists, list):
         hists = [hists]
     bins = hists[0][1]
