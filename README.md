@@ -19,3 +19,18 @@ However, if you want to, you can of course also install it directly from the Git
 ```
 $ python -m pip install .
 ```
+
+## Contributing
+
+As this library is experimental contributions of all forms are welcome.
+If you have ideas on how to improve the API or conceptually how a library meant to introduce people to the Scikit-HEP ecosystem should be structured please open an Issue.
+You are of course also most welcome and encouraged to open PRs.
+
+## Acknowledgements
+
+This library is built upon the hard work of many people in the [Scikit-HEP ecosystem](https://scikit-hep.org/) and is only possible because of the exchange of ideas and contributions of people working together, across experiments and fields to improve science.
+This is not an inevitability, but rather the result of directed thought, time, and effort, to which I am most thankful to have benefited from and have been involved in.
+
+## Requests
+
+Cite the software you use in your papers.
