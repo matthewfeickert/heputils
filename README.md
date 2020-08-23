@@ -1,5 +1,10 @@
 # heputils
 
+[![GitHub Project](https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub)](https://github.com/matthewfeickert/heputils)
+[![GitHub Actions Status: CI](https://github.com/matthewfeickert/heputils/workflows/CI/badge.svg?branch=master)](https://github.com/matthewfeickert/heputils/actions?query=workflow%3ACI+branch%3Amaster)
+[![Code Coverage](https://codecov.io/gh/matthewfeickert/heputils/graph/badge.svg?branch=master)](https://codecov.io/gh/matthewfeickert/heputils?branch=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 Helper utilities around the Scikit-HEP ecosystem for common tasks in HEP
 
 **This library is not meant for wide use and will probably be deprecated in favor of [`scikit-hep`](https://github.com/scikit-hep/scikit-hep) soon.**
