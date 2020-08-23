@@ -26,6 +26,27 @@ As this library is experimental contributions of all forms are welcome.
 If you have ideas on how to improve the API or conceptually how a library meant to introduce people to the Scikit-HEP ecosystem should be structured please open an Issue.
 You are of course also most welcome and encouraged to open PRs.
 
+### Developing
+
+To develop, use a virtual environment.
+Once the environment is activated, clone the repo from GitHub
+
+```
+git clone git@github.com:matthewfeickert/heputils.git
+```
+
+and install all necessary packages for development
+
+```
+python -m pip install --ignore-installed --upgrade -e .[complete]
+```
+
+Then setup the Git pre-commit hooks by running
+
+```
+pre-commit install
+```
+
 ## Acknowledgements
 
 This library is built upon the hard work of many people in the [Scikit-HEP ecosystem](https://scikit-hep.org/) and is only possible because of the exchange of ideas and contributions of people working together, across experiments and fields to improve science.
