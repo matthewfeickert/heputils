@@ -1,7 +1,7 @@
 """Visualization module."""
 
 import matplotlib.pyplot as plt
-import mplhep.histplot
+from mplhep import histplot
 
 
 def stack_hist(hists, **kwargs):
@@ -24,7 +24,7 @@ def stack_hist(hists, **kwargs):
     else:
         hists = [h[0] for h in hists]
 
-    ax = mplhep.histplot(
+    ax = histplot(
         hists, bins=bins, stack=True, histtype="fill", label=labels, color=color
     )
     ax.semilogy()
