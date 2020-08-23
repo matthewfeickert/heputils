@@ -38,6 +38,5 @@ jobs:
       if: github.event_name == 'push' && matrix.python-version == 3.8 && matrix.os == 'ubuntu-latest'
       uses: codecov/codecov-action@v1
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: unittests
