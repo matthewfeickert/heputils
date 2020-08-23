@@ -5,11 +5,17 @@ from mplhep import histplot
 
 
 def stack_hist(hists, **kwargs):
-    fig, ax = plt.subplots()
+    if not isinstance(hists, list):
+        hists = [hists]
     bins = hists[0][1]
+
+    fig, ax = plt.subplots()
+
     scale_factors = kwargs.pop("scale_factors", None)
     labels = kwargs.pop("labels", None)
     color = kwargs.pop("color", None)
+    if len(color) != len(hists):
+        color = color[: len(hists)]
     xlabel = kwargs.pop("xlabel", None)
     ylabel = kwargs.pop("ylabel", None)
     title = kwargs.pop("title", None)
