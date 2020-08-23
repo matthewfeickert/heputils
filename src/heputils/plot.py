@@ -19,16 +19,19 @@ def stack_hist(hists, **kwargs):
         hists = [hists]
     bins = hists[0][1]
 
-    fig, ax = plt.subplots()
-
+    # get all the kwargs
     scale_factors = kwargs.pop("scale_factors", None)
     labels = kwargs.pop("labels", None)
     color = kwargs.pop("color", None)
-    if len(color) != len(hists):
-        color = color[: len(hists)]
+    if color is not None:
+        if len(color) != len(hists):
+            color = color[: len(hists)]
+    alpha = kwargs.pop("alpha", None)
     xlabel = kwargs.pop("xlabel", None)
     ylabel = kwargs.pop("ylabel", None)
     title = kwargs.pop("title", None)
+
+    fig, ax = plt.subplots()
 
     if all(v is not None for v in [labels, scale_factors]):
         labels = [
@@ -41,11 +44,19 @@ def stack_hist(hists, **kwargs):
         hists = [h[0] for h in hists]
 
     ax = histplot(
-        hists, bins=bins, stack=True, histtype="fill", label=labels, color=color
+        hists,
+        bins=bins,
+        stack=True,
+        histtype="fill",
+        label=labels,
+        color=color,
+        alpha=alpha,
     )
     ax.semilogy()
+
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
     ax.legend(loc="best")
+
     return fig, ax
