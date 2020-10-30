@@ -1,2 +1,1 @@
-fonts-open-sans
-msttcorefonts
+ttf-mscorefonts-installer
