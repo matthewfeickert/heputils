@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 from mplhep import histplot
+import hist
 
 
 def stack_hist(hists, **kwargs):
@@ -17,6 +18,8 @@ def stack_hist(hists, **kwargs):
     """
     if not isinstance(hists, list):
         hists = [hists]
+    if isinstance(hists[0], hist.Hist):
+        hists = [h.to_numpy() for h in hists]
     bins = hists[0][1]
 
     # get all the kwargs

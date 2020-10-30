@@ -1,5 +1,6 @@
 import numpy as np
 import json
+import uproot as uproot3
 
 _bins = np.arange(0, 10200, 200).tolist()
 
@@ -229,6 +230,13 @@ hists["signal"] = {
 def main():
     with open("example.json", "w") as serialization:
         json.dump(hists, serialization)
+
+    with uproot3.recreate("example.root", compression=uproot3.ZLIB(4)) as outfile:
+        for key in hists.keys():
+            outfile[key] = (
+                np.array(hists[key]["counts"]),
+                np.array(hists[key]["bins"]),
+            )
 
 
 if __name__ == "__main__":

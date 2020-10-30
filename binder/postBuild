@@ -1,4 +1,4 @@
 python -m pip install --upgrade .[lint]
 # Create example JSON
 python tests/example_files.py
-mv example.json examples/example.json
+mv example.root examples/example.root
