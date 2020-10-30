@@ -30,14 +30,7 @@ def uproot_to_hist(uproot_hist):
     # This is a one liner once a bug is fixed
     # return uproot_hist.to_hist()
     values, edges = uproot_hist.to_numpy()
-    _hist = Hist(
-        hist.axis.Regular(
-            len(edges) - 1, edges[0], edges[-1], name=uproot_hist.all_members["fName"]
-        ),
-        storage=hist.storage.Double(),
-    )
-    _hist[:] = values
-    return _hist
+    return numpy_to_hist(values, edges, name=uproot_hist.all_members["fName"])
 
 
 def uproot_to_numpy(uproot_hist):
@@ -52,3 +45,23 @@ def uproot_to_numpy(uproot_hist):
     """
     # return values, edges
     return uproot_hist.to_numpy()
+
+
+def numpy_to_hist(values, edges, name=None):
+    """
+    Convert a `numpy` histogram to a `hist` histogram.
+
+    Args:
+        values (array): The bin counts
+        edges (array): The bin edges
+        name (str): The name of the histogram axis
+
+    Returns:
+        hist.Hist.hist: The converted `hist` histogram
+    """
+    _hist = Hist(
+        hist.axis.Regular(len(edges) - 1, edges[0], edges[-1], name=name),
+        storage=hist.storage.Double(),
+    )
+    _hist[:] = values
+    return _hist
