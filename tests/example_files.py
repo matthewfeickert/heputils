@@ -233,7 +233,10 @@ def main():
 
     with uproot3.recreate("example.root", compression=uproot3.ZLIB(4)) as outfile:
         for key in hists.keys():
-            outfile[key] = np.histogram(hists[key]["counts"], hists[key]["bins"])
+            outfile[key] = (
+                np.array(hists[key]["counts"]),
+                np.array(hists[key]["bins"]),
+            )
 
 
 if __name__ == "__main__":
