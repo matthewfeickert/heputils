@@ -1,7 +1,7 @@
 from setuptools import setup
 
 extras_require = {}
-extras_require["lint"] = sorted(set(["pyflakes", "black"]))
+extras_require["lint"] = sorted(set(["flake8", "black"]))
 extras_require["test"] = sorted(
     set(
         [
