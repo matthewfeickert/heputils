@@ -2,7 +2,12 @@
 
 import matplotlib.pyplot as plt
 from mplhep import histplot
+from mplhep import style
 import hist
+
+
+def set_style(experiment_style):
+    plt.style.use(eval(f"style.{experiment_style}"))
 
 
 def stack_hist(hists, **kwargs):
