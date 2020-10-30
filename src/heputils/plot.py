@@ -13,7 +13,9 @@ def set_style(experiment_style):
     Example:
 
         >>> import heputils
+        >>> import mplhep
         >>> heputils.plot.set_style("ATLAS")
+        >>> heputils.plot.set_style(mplhep.style.CMS)
 
     Args:
         experiment_style (str or `mplhep.style` dict): The experiment sytle
