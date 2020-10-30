@@ -1,7 +1,5 @@
 """Convert between different histogram representations"""
 
-import numpy as np
-import uproot4 as uproot
 import hist
 from hist import Hist
 

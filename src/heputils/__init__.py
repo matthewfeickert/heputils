@@ -2,4 +2,5 @@ from .version import __version__
 from . import plot
 from . import convert
 
-__all__ = ["__version__"]
+# Satisfy pyflakes
+__all__ = ["__version__", "plot", "convert"]
