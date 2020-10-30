@@ -4,10 +4,11 @@
 [![GitHub Actions Status: CI](https://github.com/matthewfeickert/heputils/workflows/CI/badge.svg?branch=master)](https://github.com/matthewfeickert/heputils/actions?query=workflow%3ACI+branch%3Amaster)
 [![Code Coverage](https://codecov.io/gh/matthewfeickert/heputils/graph/badge.svg?branch=master)](https://codecov.io/gh/matthewfeickert/heputils?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/matthewfeickert/heputils/HEAD?urlpath=lab/tree/examples/dev-example.ipynb)
 
-Helper utilities around the Scikit-HEP ecosystem for common tasks in HEP
+Helper utilities around the [Scikit-HEP ecosystem][Scikit-HEP] for common tasks in HEP
 
-**This library is not meant for wide use and will probably be deprecated in favor of [`scikit-hep`](https://github.com/scikit-hep/scikit-hep) soon.**
+**This library is not meant for wide use and will probably be deprecated in favor of a Scikit-HEP library soon.**
 This library should be viewed as a testing grounds for API design decisions, hence it will not be put up on PyPI.
 
 ## Installation
@@ -54,9 +55,11 @@ pre-commit install
 
 ## Acknowledgements
 
-This library is built upon the hard work of many people in the [Scikit-HEP ecosystem](https://scikit-hep.org/) and is only possible because of the exchange of ideas and contributions of people working together, across experiments and fields to improve science.
+This library is built upon the hard work of many people in the [Scikit-HEP ecosystem][Scikit-HEP] and is only possible because of the exchange of ideas and contributions of people working together, across experiments and fields to improve science.
 This is not an inevitability, but rather the result of directed thought, time, and effort, to which I am most thankful to have benefited from and have been involved in.
 
 ## Requests
 
 Cite the software you use in your papers.
+
+[Scikit-HEP]: https://scikit-hep.org/
