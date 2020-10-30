@@ -30,6 +30,7 @@ def stack_hist(hists, **kwargs):
     xlabel = kwargs.pop("xlabel", None)
     ylabel = kwargs.pop("ylabel", None)
     title = kwargs.pop("title", None)
+    return_artists = kwargs.pop("return_artists", False)
 
     fig, ax = plt.subplots()
 
@@ -59,5 +60,4 @@ def stack_hist(hists, **kwargs):
     ax.set_title(title)
     ax.legend(loc="best")
 
-    artists = ax.get_children()
-    return ax, artists
+    return (ax, ax.get_children()) if return_artists else ax
