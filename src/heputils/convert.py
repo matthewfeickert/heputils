@@ -14,11 +14,11 @@ def uproot_to_hist(uproot_hist):
 
         >>> import uproot4 as uproot
         >>> import heputils.convert as convert
-        >>> root_file = uproot.open("example.root")
-        >>> type(root_file["jet_mass"])
+        >>> root_file = uproot.open("example.root") # doctest: +SKIP
+        >>> type(root_file["jet_mass"]) # doctest: +SKIP
         uproot4.dynamic.Model_TH1F_v3
-        >>> hist_jet_mass = convert.uproot_to_hist(root_file["jet_mass"])
-        >>> type(hout)
+        >>> hist_jet_mass = convert.uproot_to_hist(root_file["jet_mass"]) # doctest: +SKIP
+        >>> type(hist_jet_mass) # doctest: +SKIP
         <class 'hist.hist.Hist'>
 
     Args:
