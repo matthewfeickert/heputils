@@ -24,7 +24,7 @@ def set_style(experiment_style):
         # passed in experiment mplhep.style dict
         plt.style.use(experiment_style)
     else:
-        plt.style.use(eval(f"style.{experiment_style}"))
+        plt.style.use(getattr(style, f"{experiment_style}"))
 
 
 def stack_hist(hists, **kwargs):
