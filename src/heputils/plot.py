@@ -43,7 +43,7 @@ def stack_hist(hists, **kwargs):
     else:
         hists = [h[0] for h in hists]
 
-    ax = histplot(
+    histplot(
         hists,
         bins=bins,
         stack=True,
@@ -59,4 +59,5 @@ def stack_hist(hists, **kwargs):
     ax.set_title(title)
     ax.legend(loc="best")
 
-    return fig, ax
+    artists = ax.get_children()
+    return ax, artists
