@@ -5,6 +5,7 @@ from mplhep import histplot
 from mplhep import style
 import mplhep
 import hist
+from datetime import datetime
 
 
 def set_style(experiment_style):
@@ -92,8 +93,13 @@ def stack_hist(hists, **kwargs):
     ax.legend(loc="best")
 
     if status is not None:
+        # is_simulation = kwargs.pop("is_simulation", True)
+        # is_paper = kwargs.pop("is_paper", None)
+        # year = kwargs.pop("year", datetime.now().year)
         # Ask Andrzej about how to control label
-        # getattr(mplhep, _experiment_style.lower()).label()
-        getattr(mplhep, _experiment_style.lower()).text(status)
+        # ax = getattr(mplhep, _experiment_style.lower()).label(
+        #     data=not is_simulation, paper=is_paper, year=year, ax=ax
+        # )
+        ax = getattr(mplhep, _experiment_style.lower()).text(status, ax=ax)
 
     return (ax, ax.get_children()) if return_artists else ax
