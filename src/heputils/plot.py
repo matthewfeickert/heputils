@@ -77,12 +77,22 @@ def stack_hist(hists, **kwargs):
         hists = [h[0] for h in hists]
 
     histplot(
+        hists[-1],
+        bins=bins,
+        stack=False,
+        histtype="errorbar",
+        label=labels[labels.index("Data")],
+        color=color[-1],
+        alpha=alpha,
+        ax=ax,
+    )
+    histplot(
         hists,
         bins=bins,
         stack=True,
         histtype="fill",
-        label=labels,
-        color=color,
+        label=labels[:-1],
+        color=color[:-1],
         alpha=alpha,
         ax=ax,
     )
