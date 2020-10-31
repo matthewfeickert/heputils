@@ -84,6 +84,7 @@ def stack_hist(hists, **kwargs):
         label=labels,
         color=color,
         alpha=alpha,
+        ax=ax,
     )
     ax.semilogy()
 
