@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 from mplhep import histplot
-from mplhep import style
+import mplhep
 import hist
 
 
