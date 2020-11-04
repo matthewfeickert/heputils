@@ -6,7 +6,7 @@ import mplhep
 import hist
 
 
-def set_style(experiment_style):
+def set_style(style):
     """
     Set the experiment specific plotting style
 
@@ -18,13 +18,9 @@ def set_style(experiment_style):
         >>> heputils.plot.set_style(mplhep.style.CMS)
 
     Args:
-        experiment_style (str or `mplhep.style` dict): The experiment sytle
+        style (str or `mplhep.style` dict): The experiment style
     """
-    if isinstance(experiment_style, dict):
-        # passed in experiment mplhep.style dict
-        plt.style.use(experiment_style)
-    else:
-        plt.style.use(getattr(style, f"{experiment_style}"))
+    mplhep.set_style(style)
 
 
 def stack_hist(hists, **kwargs):
