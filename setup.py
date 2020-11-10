@@ -1,17 +1,15 @@
 from setuptools import setup
 
 extras_require = {}
-extras_require["lint"] = sorted(set(["flake8", "black"]))
+extras_require["lint"] = sorted({"flake8", "black"})
 extras_require["test"] = sorted(
-    set(
-        [
-            "check-manifest",
-            "pytest~=6.0",
-            "pytest-cov~=2.8",
-            "pytest-console-scripts~=0.2",
-            "pytest-mock~=3.0",
-        ]
-    )
+    {
+        "check-manifest",
+        "pytest~=6.0",
+        "pytest-cov~=2.8",
+        "pytest-console-scripts~=0.2",
+        "pytest-mock~=3.0",
+    }
 )
 extras_require["develop"] = sorted(
     set(
