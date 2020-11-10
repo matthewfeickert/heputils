@@ -3,6 +3,7 @@
 [![GitHub Project](https://img.shields.io/badge/GitHub--blue?style=social&logo=GitHub)](https://github.com/matthewfeickert/heputils)
 [![GitHub Actions Status: CI](https://github.com/matthewfeickert/heputils/workflows/CI/badge.svg?branch=master)](https://github.com/matthewfeickert/heputils/actions?query=workflow%3ACI+branch%3Amaster)
 [![Code Coverage](https://codecov.io/gh/matthewfeickert/heputils/graph/badge.svg?branch=master)](https://codecov.io/gh/matthewfeickert/heputils?branch=master)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/matthewfeickert/heputils/master.svg)](https://results.pre-commit.ci/latest/github/matthewfeickert/heputils/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/matthewfeickert/heputils/HEAD?urlpath=lab/tree/examples/dev-example.ipynb)
 
