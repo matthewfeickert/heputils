@@ -228,6 +228,13 @@ hists["signal"] = {
 
 
 def main():
+    # Make pseudodata from Poisson fluctuaions
+    data_hist = []
+    for key in hists.keys():
+        counts = np.array(hists[key]["counts"])
+        data_hist.append(counts + np.random.poisson(np.sqrt(counts)))
+    hists["data"] = {"counts": sum(data_hist).tolist(), "bins": _bins}
+
     with open("example.json", "w") as serialization:
         json.dump(hists, serialization)
 
