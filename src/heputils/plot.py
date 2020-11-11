@@ -39,9 +39,9 @@ def stack_hist(hists, **kwargs):
     """
     if not isinstance(hists, list):
         hists = [hists]
-    if isinstance(hists[0], hist.Hist):
-        hists = [h.to_numpy() for h in hists]
-    bins = hists[0][1]
+    # if isinstance(hists[0], hist.Hist):
+    #     hists = [h.to_numpy() for h in hists]
+    # bins = hists[0][1]
 
     # get all the kwargs
     scale_factors = kwargs.pop("scale_factors", None)
@@ -54,6 +54,7 @@ def stack_hist(hists, **kwargs):
     xlabel = kwargs.pop("xlabel", None)
     ylabel = kwargs.pop("ylabel", None)
     title = kwargs.pop("title", None)
+    semilogy = kwargs.pop("logy", True)
     return_artists = kwargs.pop("return_artists", False)
 
     fig, ax = plt.subplots()
@@ -64,13 +65,12 @@ def stack_hist(hists, **kwargs):
             for label, sf in zip(labels, scale_factors)
         ]
     if scale_factors is not None:
-        hists = [h[0] * sf for h, sf in zip(hists, scale_factors)]
-    else:
-        hists = [h[0] for h in hists]
+        hists = [h * sf for h, sf in zip(hists, scale_factors)]
+    # else:
+    #     hists = [h[0] for h in hists]
 
     histplot(
         hists,
-        bins=bins,
         stack=True,
         histtype="fill",
         label=labels,
@@ -79,11 +79,11 @@ def stack_hist(hists, **kwargs):
     )
 
     # draw uncertainty
-    hists = numpy_to_hist(hists, bins)  # FIXME: This is broken
     stack_hist = stack_hists(hists)
     stat_uncert = np.sqrt(stack_hist)
     bin_centers = stack_hist.axes.centers[0]
     bin_widths = stack_hist.axes.widths[0]
+    uncert_label = "Stat Uncertainity"
 
     ax.bar(
         bin_centers,
@@ -94,10 +94,12 @@ def stack_hist(hists, **kwargs):
         linewidth=0,
         edgecolor="gray",
         hatch=3 * "/",
-        label="Uncertainity",
+        label=uncert_label,
     )
 
-    ax.semilogy()
+    if semilogy:
+        ax.semilogy()
+        ax.set_ylim(top=max(stack_hist) * 10)
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
