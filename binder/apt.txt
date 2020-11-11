@@ -1,2 +1,3 @@
 msttcorefonts
 ttf-mscorefonts-installer
+fonts-freefont-ttf
