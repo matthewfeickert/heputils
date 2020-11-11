@@ -29,7 +29,7 @@ def uproot_to_hist(uproot_hist):
     # c.f. https://github.com/scikit-hep/hist/issues/115
     # return uproot_hist.to_hist()
     values, edges = uproot_hist.to_numpy()
-    return numpy_to_hist(values, edges, name=uproot_hist.all_members["fName"])
+    return numpy_to_hist(values, edges)
 
 
 def uproot_to_numpy(uproot_hist):
