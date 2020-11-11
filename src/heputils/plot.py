@@ -125,12 +125,13 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     return _plot_ax_kwargs(ax, **kwargs)
 
 
-def stack_hist(hists, **kwargs):
+def stack_hist(hists, ax=None, **kwargs):
     """
     Plot a stacked histogram of all the input histograms
 
     Args:
         hists (list): List of numpy arrays representing histograms
+        ax (`matplotlib.axes.Axes`): The axis object to plot on
         kwargs: Keyword arguments to matplotlib
 
     Returns:
@@ -148,13 +149,12 @@ def stack_hist(hists, **kwargs):
             color = color[: len(hists)]
     alpha = kwargs.pop("alpha", None)
     semilogy = kwargs.pop("logy", True)
-    ax = kwargs.pop("ax", None)
     _data_hist = kwargs.pop("data_hist", None)
     data_uncert = kwargs.pop("data_uncert", None)
     data_label = kwargs.pop("data_label", "Data")
 
     if ax is None:
-        _, ax = plt.subplots()
+        ax = plt.gca()
 
     if all(v is not None for v in [labels, scale_factors]):
         labels = [
@@ -171,12 +171,13 @@ def stack_hist(hists, **kwargs):
         label=labels,
         color=color,
         alpha=alpha,
+        ax=ax,
     )
 
     # Inspired by cabinetry
     # https://github.com/alexander-held/cabinetry/blob/aa36561eba458d47a17a4a7db1ffdce08417ce89/src/cabinetry/contrib/matplotlib_visualize.py#L87
     stack_hist = stack_hists(hists)
-    _plot_uncertainty(stack_hist, ax)
+    ax = _plot_uncertainty(stack_hist, ax)
 
     if _data_hist is not None:
         ax = data_hist(_data_hist, uncert=data_uncert, label=data_label, ax=ax)
