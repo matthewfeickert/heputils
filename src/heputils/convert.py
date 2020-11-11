@@ -81,7 +81,9 @@ def stack_hists(hists):
         >>> h1 = hist.Hist(hist.axis.Regular(10, 0, 10), storage=hist.storage.Double())
         >>> h2 = h1.copy()
         >>> h1.fill(np.random.normal(loc=5, scale=1, size=100))
+        Hist(Regular(10, 0, 10, label='Axis 0'), storage=Double()) # Sum: 100.0
         >>> h2.fill(np.random.normal(loc=6, scale=2, size=100))
+        Hist(Regular(10, 0, 10, label='Axis 0'), storage=Double()) # Sum: 98.0 (100.0 with flow)
         >>> stack_hist = convert.stack_hists([h1, h2])
         >>> print(stack_hist)
                        +-------------------------------------------------------------+
