@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from mplhep import histplot
 import mplhep
 import hist
+import numpy as np
+from .convert import stack_hists
+from .convert import numpy_to_hist
 
 
 def set_style(style):
@@ -74,6 +77,26 @@ def stack_hist(hists, **kwargs):
         color=color,
         alpha=alpha,
     )
+
+    # draw uncertainty
+    hists = numpy_to_hist(hists, bins)  # FIXME: This is broken
+    stack_hist = stack_hists(hists)
+    stat_uncert = np.sqrt(stack_hist)
+    bin_centers = stack_hist.axes.centers[0]
+    bin_widths = stack_hist.axes.widths[0]
+
+    ax.bar(
+        bin_centers,
+        height=2 * stat_uncert,
+        width=bin_widths,
+        bottom=stack_hist - stat_uncert,
+        fill=False,
+        linewidth=0,
+        edgecolor="gray",
+        hatch=3 * "/",
+        label="Uncertainity",
+    )
+
     ax.semilogy()
 
     ax.set_xlabel(xlabel)
