@@ -25,6 +25,15 @@ def set_style(style):
 
 
 def _plot_ax_kwargs(ax, **kwargs):
+    """
+    Apply kwargs to an axis.
+
+    Args:
+        ax (`matplotlib.axes.Axes`): The axis object to mutate
+
+    Returns:
+        `matplotlib.axes.Axes`: matplotlib axis object
+    """
     # get all the kwargs
     xlabel = kwargs.pop("xlabel", ax.get_xlabel())
     ylabel = kwargs.pop("ylabel", ax.get_ylabel())
