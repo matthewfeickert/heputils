@@ -24,6 +24,34 @@ def set_style(style):
     mplhep.set_style(style)
 
 
+def _plot_ax_kwargs(ax, **kwargs):
+    # get all the kwargs
+    xlabel = kwargs.pop("xlabel", ax.get_xlabel())
+    ylabel = kwargs.pop("ylabel", ax.get_ylabel())
+    title = kwargs.pop("title", ax.get_title())
+    semilogy = kwargs.pop("logy", None)
+    legend_loc = kwargs.pop("legend_loc", "best")
+    return_artists = kwargs.pop("return_artists", False)
+
+    if semilogy is not None:
+        if semilogy:
+            ax.semilogy()
+        else:
+            ax.set_yscale("linear")
+            # Ensure scale is sensible
+            ax.relim()
+            ax.autoscale()
+    else:
+        ax.set_yscale(ax.get_yscale())
+
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.legend(loc=legend_loc)
+
+    return (ax, ax.get_children()) if return_artists else ax
+
+
 def _plot_uncertainty(model_hist, ax):
     """
     Plot the model uncertainity as a bar plot
@@ -75,11 +103,6 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     # get all the kwargs
     color = kwargs.pop("color", "black")
     label = kwargs.pop("label", "Data")
-    xlabel = kwargs.pop("xlabel", None)
-    ylabel = kwargs.pop("ylabel", None)
-    title = kwargs.pop("title", None)
-    semilogy = kwargs.pop("logy", True)
-    return_artists = kwargs.pop("return_artists", False)
 
     histplot(
         hist,
@@ -89,15 +112,8 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         label=label,
         ax=ax,
     )
-    if semilogy:
-        ax.semilogy()
 
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.legend(loc="best")
-
-    return (ax, ax.get_children()) if return_artists else ax
+    return _plot_ax_kwargs(ax, **kwargs)
 
 
 def stack_hist(hists, **kwargs):
@@ -122,15 +138,11 @@ def stack_hist(hists, **kwargs):
         if len(color) != len(hists):
             color = color[: len(hists)]
     alpha = kwargs.pop("alpha", None)
-    xlabel = kwargs.pop("xlabel", None)
-    ylabel = kwargs.pop("ylabel", None)
-    title = kwargs.pop("title", None)
     semilogy = kwargs.pop("logy", True)
     ax = kwargs.pop("ax", None)
     _data_hist = kwargs.pop("data_hist", None)
     data_uncert = kwargs.pop("data_uncert", None)
     data_label = kwargs.pop("data_label", "Data")
-    return_artists = kwargs.pop("return_artists", False)
 
     if ax is None:
         _, ax = plt.subplots()
@@ -165,9 +177,4 @@ def stack_hist(hists, **kwargs):
         # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 100)
 
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.legend(loc="best")
-
-    return (ax, ax.get_children()) if return_artists else ax
+    return _plot_ax_kwargs(ax, **kwargs)
