@@ -3,10 +3,8 @@
 import matplotlib.pyplot as plt
 from mplhep import histplot
 import mplhep
-import hist
 import numpy as np
 from .convert import stack_hists
-from .convert import numpy_to_hist
 
 
 def set_style(style):
@@ -26,6 +24,37 @@ def set_style(style):
     mplhep.set_style(style)
 
 
+def _plot_uncertainty(model_hist, ax):
+    """
+    Plot the model uncertainity as a bar plot
+
+    Args:
+        model_hist (`hist.Hist`): The histogram to calculate uncertainity for
+        ax (`matplotlib.axes.Axes`): The axis the bar plot is drawn on
+
+    Returns:
+        `matplotlib.axes.Axes`: The axis the bar plot is drawn on
+    """
+
+    stat_uncert = np.sqrt(model_hist)
+    bin_centers = model_hist.axes.centers[0]
+    bin_widths = model_hist.axes.widths[0]
+    uncert_label = "Stat Uncertainity"
+
+    ax.bar(
+        bin_centers,
+        height=2 * stat_uncert,
+        width=bin_widths,
+        bottom=model_hist - stat_uncert,
+        fill=False,
+        linewidth=0,
+        edgecolor="gray",
+        hatch=3 * "/",
+        label=uncert_label,
+    )
+    return ax
+
+
 def stack_hist(hists, **kwargs):
     """
     Plot a stacked histogram of all the input histograms
@@ -39,9 +68,6 @@ def stack_hist(hists, **kwargs):
     """
     if not isinstance(hists, list):
         hists = [hists]
-    # if isinstance(hists[0], hist.Hist):
-    #     hists = [h.to_numpy() for h in hists]
-    # bins = hists[0][1]
 
     # get all the kwargs
     scale_factors = kwargs.pop("scale_factors", None)
@@ -66,8 +92,6 @@ def stack_hist(hists, **kwargs):
         ]
     if scale_factors is not None:
         hists = [h * sf for h, sf in zip(hists, scale_factors)]
-    # else:
-    #     hists = [h[0] for h in hists]
 
     histplot(
         hists,
@@ -78,27 +102,14 @@ def stack_hist(hists, **kwargs):
         alpha=alpha,
     )
 
-    # draw uncertainty
+    # Inspired by cabinetry
+    # https://github.com/alexander-held/cabinetry/blob/aa36561eba458d47a17a4a7db1ffdce08417ce89/src/cabinetry/contrib/matplotlib_visualize.py#L87
     stack_hist = stack_hists(hists)
-    stat_uncert = np.sqrt(stack_hist)
-    bin_centers = stack_hist.axes.centers[0]
-    bin_widths = stack_hist.axes.widths[0]
-    uncert_label = "Stat Uncertainity"
-
-    ax.bar(
-        bin_centers,
-        height=2 * stat_uncert,
-        width=bin_widths,
-        bottom=stack_hist - stat_uncert,
-        fill=False,
-        linewidth=0,
-        edgecolor="gray",
-        hatch=3 * "/",
-        label=uncert_label,
-    )
+    _plot_uncertainty(stack_hist, ax)
 
     if semilogy:
         ax.semilogy()
+        # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 10)
 
     ax.set_xlabel(xlabel)
