@@ -33,7 +33,9 @@ def get_style(style=None):
         >>> import heputils
         >>> heputils.plot.set_style("ATLAS")
         >>> heputils.plot.get_style()["figure.figsize"]
-        (8.75, 5.92)
+        [8.75, 5.92]
+        >>> heputils.plot.get_style("CMS")["figure.figsize"]
+        (10.0, 10.0)
 
     Args:
         style (str or `mplhep.style` dict): The experiment style
