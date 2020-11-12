@@ -80,17 +80,25 @@ def _plot_ax_kwargs(ax, **kwargs):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title)
-    ax.legend(loc=legend_loc)
+
+    # Ensure uncertainty and data at top of legend
+    handles, labels = ax.get_legend_handles_labels()
+    # FIXME: Make this user defined and not hardcoded
+    for label in ["Stat Uncertainty", "Data"]:
+        if label in labels:
+            handles.insert(0, handles.pop(labels.index(label)))
+            labels.insert(0, labels.pop(labels.index(label)))
+    ax.legend(handles, labels, loc=legend_loc)
 
     return (ax, ax.get_children()) if return_artists else ax
 
 
 def _plot_uncertainty(model_hist, ax):
     """
-    Plot the model uncertainity as a bar plot
+    Plot the model uncertainty as a bar plot
 
     Args:
-        model_hist (`hist.Hist`): The histogram to calculate uncertainity for
+        model_hist (`hist.Hist`): The histogram to calculate uncertainty for
         ax (`matplotlib.axes.Axes`): The axis the bar plot is drawn on
 
     Returns:
@@ -100,7 +108,7 @@ def _plot_uncertainty(model_hist, ax):
     stat_uncert = np.sqrt(model_hist)
     bin_centers = model_hist.axes.centers[0]
     bin_widths = model_hist.axes.widths[0]
-    uncert_label = "Stat Uncertainity"
+    uncert_label = "Stat Uncertainty"
 
     ax.bar(
         bin_centers,
@@ -122,7 +130,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
 
     Args:
         hist (`hist.Hist`): The histogram containing the data
-        uncert (`array`): The uncertainity values for the `hist`
+        uncert (`array`): The uncertainty values for the `hist`
         ax (`matplotlib.axes.Axes`): The axis object to plot on
 
     Returns:
