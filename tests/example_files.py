@@ -227,13 +227,28 @@ hists["signal"] = {
 }
 
 
-def main():
+def make_data_hist(hists):
     # Make pseudodata from Poisson fluctuaions
     data_hist = []
     for key in hists.keys():
         counts = np.array(hists[key]["counts"])
         data_hist.append(counts + np.random.poisson(np.sqrt(counts)))
-    hists["data"] = {"counts": sum(data_hist).tolist(), "bins": _bins}
+    data_hist = np.array(sum(data_hist))
+
+    # If counts less than one then take count as Poisson init
+    less_than_one = np.logical_and(data_hist > 0, data_hist <= 1)
+    data_hist[np.where(less_than_one)[0]] = np.random.poisson(
+        lam=data_hist[less_than_one]
+    )
+    # As experimental counts need to be integers
+    return data_hist.astype(int)
+
+
+def main():
+    np.random.seed(0)
+
+    data_hist = make_data_hist(hists)
+    hists["data"] = {"counts": data_hist.tolist(), "bins": _bins}
 
     with open("example.json", "w") as serialization:
         json.dump(hists, serialization)
