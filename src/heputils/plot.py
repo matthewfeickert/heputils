@@ -24,6 +24,30 @@ def set_style(style):
     mplhep.set_style(style)
 
 
+def get_style(style=None):
+    """
+    Set the experiment specific plotting style
+
+    Example:
+
+        >>> import heputils
+        >>> heputils.plot.set_style("ATLAS")
+        >>> heputils.plot.get_style()["figure.figsize"]
+        (8.75, 5.92)
+
+    Args:
+        style (str or `mplhep.style` dict): The experiment style
+
+    Returns:
+        dict: The style dict requested
+    """
+    if style is not None:
+        style = getattr(mplhep.style, style)
+    else:
+        style = dict(plt.rcParams)
+    return style
+
+
 def _plot_ax_kwargs(ax, **kwargs):
     """
     Apply kwargs to an axis.
