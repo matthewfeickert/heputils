@@ -38,7 +38,7 @@ def get_style(style=None):
         (10.0, 10.0)
 
     Args:
-        style (str or `mplhep.style` dict): The experiment style
+        style (str): The experiment style string alias
 
     Returns:
         dict: The style dict requested
