@@ -10,17 +10,16 @@
 Helper utilities around the [Scikit-HEP ecosystem][Scikit-HEP] for common tasks in HEP
 
 **This library is not meant for wide use and will probably be deprecated in favor of a Scikit-HEP library soon.**
-This library should be viewed as a testing grounds for API design decisions, hence it will not be put up on PyPI.
+This library should be viewed as a testing grounds for API design decisions.
 
 ## Installation
 
 In a fresh virtual environment
 
 ```
-$ python -m pip install "git+https://github.com/matthewfeickert/heputils.git"
+$ python -m pip install heputils
 ```
 
-The above is actually cloning and installing directly from the Git repository.
 However, if you want to, you can of course also install it directly from the Git repository "locally" by first cloning the repo and then from the top level of it running
 
 ```
