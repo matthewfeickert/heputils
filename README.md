@@ -7,6 +7,9 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/matthewfeickert/heputils/HEAD?urlpath=lab/tree/examples/dev-example.ipynb)
 
+[![PyPI version](https://badge.fury.io/py/heputils.svg)](https://badge.fury.io/py/heputils)
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/heputils.svg)](https://pypi.org/project/heputils/)
+
 Helper utilities around the [Scikit-HEP ecosystem][Scikit-HEP] for common tasks in HEP
 
 **This library is not meant for wide use and will probably be deprecated in favor of a Scikit-HEP library soon.**
