@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mplhep import histplot
 import mplhep
 import numpy as np
-from .convert import stack_hists
+from . import utils
 
 
 def set_style(style):
@@ -274,7 +274,7 @@ def stack_hist(hists, ax=None, **kwargs):
 
     # Inspired by cabinetry
     # https://github.com/alexander-held/cabinetry/blob/aa36561eba458d47a17a4a7db1ffdce08417ce89/src/cabinetry/contrib/matplotlib_visualize.py#L87
-    stack_hist = stack_hists(hists)
+    stack_hist = utils.sum_hists(hists)
     ax = _plot_uncertainty(stack_hist, ax)
 
     if _data_hist is not None:
