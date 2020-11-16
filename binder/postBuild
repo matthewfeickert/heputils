@@ -2,3 +2,4 @@ python -m pip install --upgrade .
 # Create example JSON
 python tests/example_files.py
 mv example.root examples/example.root
+jupyter nbconvert --inplace --to notebook --execute examples/dev-example.ipynb
