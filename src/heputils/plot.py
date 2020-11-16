@@ -146,15 +146,79 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     # get all the kwargs
     color = kwargs.pop("color", "black")
     label = kwargs.pop("label", "Data")
+    density = kwargs.pop("density", False)
+    if density:
+        histtype = "step"
+    else:
+        histtype = "errorbar"
 
     histplot(
         hist,
         yerr=uncert,
-        histtype="errorbar",
+        histtype=histtype,
+        density=density,
         color=color,
         label=label,
         ax=ax,
     )
+
+    return _plot_ax_kwargs(ax, **kwargs)
+
+
+def shape_hist(hists, ax=None, **kwargs):
+    """
+    Plot the shape outline of all the input histograms
+
+    Args:
+        hists (list): List of `hist.Hist` objects representing histograms
+        ax (`matplotlib.axes.Axes`): The axis object to plot on
+        kwargs: Keyword arguments to matplotlib
+
+    Returns:
+        `matplotlib.axes.Axes`: matplotlib subplot axis object
+    """
+    if not isinstance(hists, list):
+        hists = [hists]
+
+    labels = kwargs.pop("labels", None)
+    color = kwargs.pop("color", None)
+    if color is not None:
+        if len(color) != len(hists):
+            color = color[: len(hists)]
+    alpha = kwargs.pop("alpha", 0.1)
+    semilogy = kwargs.pop("logy", False)
+    _data_hist = kwargs.pop("data_hist", None)
+    data_uncert = kwargs.pop("data_uncert", None)
+    data_label = kwargs.pop("data_label", "Data")
+    density = kwargs.pop("density", True)
+
+    if ax is None:
+        ax = plt.gca()
+
+    histplot(
+        hists,
+        stack=False,
+        histtype="fill",
+        density=density,
+        label=labels,
+        color=color,
+        alpha=alpha,
+        ax=ax,
+    )
+
+    if _data_hist is not None:
+        ax = data_hist(
+            _data_hist, uncert=data_uncert, label=data_label, density=density, ax=ax
+        )
+
+    if semilogy:
+        ax.semilogy()
+        # Ensure enough space for legend
+        if not density:
+            max_hist = max([max(hist) for hist in hists])
+        else:
+            max_hist = max([max(hist.density()) for hist in hists])
+        ax.set_ylim(top=max_hist * 100)
 
     return _plot_ax_kwargs(ax, **kwargs)
 
@@ -164,7 +228,7 @@ def stack_hist(hists, ax=None, **kwargs):
     Plot a stacked histogram of all the input histograms
 
     Args:
-        hists (list): List of numpy arrays representing histograms
+        hists (list): List of `hist.Hist` objects representing histograms
         ax (`matplotlib.axes.Axes`): The axis object to plot on
         kwargs: Keyword arguments to matplotlib
 
