@@ -2,6 +2,7 @@
 
 import math
 
+import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import mplhep
 import numpy as np
@@ -495,3 +496,61 @@ def stack_hist(hists, ax=None, **kwargs):
     ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     return _plot_ax_kwargs(ax, **kwargs)
+
+
+def ratio_plot(hist_nums, hist_denom, ax):
+    hist_nums = hist_nums if isinstance(hist_nums, list) else [hist_nums]
+    ratio_hist = [num_hist / hist_denom for num_hist in hist_nums]
+
+    #     mplhep.histplot(ratio_hist, label="ratio", ax=ax)
+    mplhep.histplot(ratio_hist, ax=ax)
+    central_value = 1.0
+    y_range = 0.5
+    #     ax.axhline(central_value, color="black", label="data")
+    ax.axhline(central_value, color="black")
+    ax.set_ylim(central_value - y_range, central_value + y_range)
+    ax.set_xlabel(r"$X$ Mass [GeV]")
+    #     ax.set_ylabel("Simulation/Data")
+    ax.set_ylabel("Sim/Data")
+    #     ax.legend(loc="best")
+
+    #     fig = ax.figure
+    #     fig_width, fig_height = heputils.plot.get_style()["figure.figsize"]
+    #     fig.set_size_inches(fig_width, 0.8*fig_height)
+
+    return ax
+
+
+def stack_ratio_plot(hists, **kwargs):
+    """
+    Stack plot on top, ratio plot on bottom
+    """
+    _fig_width, _fig_height = get_style()["figure.figsize"]
+    fig = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
+    gs = gridspec.GridSpec(2, 1, height_ratios=[3.5, 1])
+    ax0 = plt.subplot(gs[0])
+    ax1 = plt.subplot(gs[1])
+    # fig, axs = plt.subplots(gs, figsize=(_fig_size[0], 2.2* _fig_size[1]))
+
+    labels = kwargs.pop("labels", None)
+    color = kwargs.pop("color", None)
+    if color is not None:
+        if len(color) != len(hists):
+            color = color[: len(hists)]
+    alpha = kwargs.pop("alpha", None)
+    semilogy = kwargs.pop("logy", True)
+    _data_hist = kwargs.pop("data_hist", None)
+
+    ax0 = stack_hist(
+        hists,
+        labels=labels,
+        color=color,
+        ylabel="Count",
+        data_hist=_data_hist,
+        ax=ax0,
+    )
+    num_hists = utils.sum_hists(hists)
+    ratio_plot(num_hists, _data_hist, ax=ax1)
+    ax0.figure.tight_layout()
+
+    return ax0, ax1
