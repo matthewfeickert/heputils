@@ -526,7 +526,8 @@ def stack_ratio_plot(hists, **kwargs):
     Stack plot on top, ratio plot on bottom
     """
     _fig_width, _fig_height = get_style()["figure.figsize"]
-    fig = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
+    # fig = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
+    _ = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
     gs = gridspec.GridSpec(2, 1, height_ratios=[3.5, 1])
     ax0 = plt.subplot(gs[0])
     ax1 = plt.subplot(gs[1])
@@ -545,7 +546,9 @@ def stack_ratio_plot(hists, **kwargs):
         hists,
         labels=labels,
         color=color,
+        alpha=alpha,
         ylabel="Count",
+        logy=semilogy,
         data_hist=_data_hist,
         ax=ax0,
     )
