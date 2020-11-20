@@ -17,16 +17,24 @@ This library should be viewed as a testing grounds for API design decisions.
 
 ## Installation
 
-In a fresh virtual environment
+In a fresh virtual environment you can install from PyPI with
 
 ```
-$ python -m pip install heputils
+python -m pip install heputils
+```
+
+### TestPyPI
+
+If you want to install development releases of `heputils` you can do so from TestPyPI with the following
+
+```
+python -m pip install --upgrade --quiet --extra-index-url https://test.pypi.org/simple/ --pre heputils
 ```
 
 However, if you want to, you can of course also install it directly from the Git repository "locally" by first cloning the repo and then from the top level of it running
 
 ```
-$ python -m pip install .
+python -m pip install .
 ```
 
 ## Contributing
