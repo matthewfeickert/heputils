@@ -23,7 +23,7 @@ In a fresh virtual environment you can install from PyPI with
 python -m pip install heputils
 ```
 
-### Development releases 
+### Development releases
 
 If you want to install _unsupported_ development releases you can do so from TestPyPI with the following
 
