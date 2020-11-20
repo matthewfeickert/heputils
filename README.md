@@ -17,16 +17,26 @@ This library should be viewed as a testing grounds for API design decisions.
 
 ## Installation
 
-In a fresh virtual environment
+In a fresh virtual environment you can install from PyPI with
 
 ```
-$ python -m pip install heputils
+python -m pip install heputils
 ```
 
-However, if you want to, you can of course also install it directly from the Git repository "locally" by first cloning the repo and then from the top level of it running
+### Development releases
+
+If you want to install _unsupported_ development releases you can do so from TestPyPI with the following
 
 ```
-$ python -m pip install .
+python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre heputils
+```
+
+which will get the release on TestPyPI that corresponds to the most recent commit on `master`.
+
+You can of course also install directly from the Git repository "locally" by first cloning the repo and then from the top level of it running
+
+```
+python -m pip install .
 ```
 
 ## Contributing
@@ -47,7 +57,7 @@ git clone git@github.com:matthewfeickert/heputils.git
 and install all necessary packages for development
 
 ```
-python -m pip install --ignore-installed --upgrade -e .[complete]
+python -m pip install --ignore-installed --upgrade --editable .[complete]
 ```
 
 Then setup the Git pre-commit hooks by running
