@@ -185,12 +185,17 @@ def shape_hist(hists, ax=None, **kwargs):
     if color is not None:
         if len(color) != len(hists):
             color = color[: len(hists)]
-    alpha = kwargs.pop("alpha", 0.1)
     semilogy = kwargs.pop("logy", False)
     _data_hist = kwargs.pop("data_hist", None)
     data_uncert = kwargs.pop("data_uncert", None)
     data_label = kwargs.pop("data_label", "Data")
     density = kwargs.pop("density", True)
+    histtype = kwargs.pop("histtype", "fill")
+    if histtype == "fill":
+        _default_alpha = 0.1
+    else:
+        _default_alpha = None
+    alpha = kwargs.pop("alpha", _default_alpha)
 
     if ax is None:
         ax = plt.gca()
@@ -198,7 +203,7 @@ def shape_hist(hists, ax=None, **kwargs):
     histplot(
         hists,
         stack=False,
-        histtype="fill",
+        histtype=histtype,
         density=density,
         label=labels,
         color=color,
