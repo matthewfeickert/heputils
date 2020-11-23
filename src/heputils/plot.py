@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from mplhep import histplot
 import mplhep
 import numpy as np
+import math
 from . import utils
 
 # To be able to reset
@@ -151,6 +152,7 @@ def draw_experiment_label(ax, **kwargs):
         luminosity_units = kwargs.pop(
             "luminosity_units", label_info["luminosity_units"]
         )
+    max_height = kwargs.pop("max_height", None)
 
     mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
 
@@ -161,7 +163,7 @@ def draw_experiment_label(ax, **kwargs):
     if lumi_info:
         label_text_lumi = rf"${luminosity}$" + rf"$~{luminosity_units}$" + "$^{-1}$"
         label_text += ", " + label_text_lumi
-    ax.text(
+    _label_text = ax.text(
         _horizontal_offset - 0.01,
         _vertical_offset - 0.08,
         label_text,
@@ -169,7 +171,59 @@ def draw_experiment_label(ax, **kwargs):
         verticalalignment="top",
         transform=ax.transAxes,
     )
+
+    # https://matplotlib.org/tutorials/advanced/transforms_tutorial.html
+    # TODO: Make this work for any artist, so don't have to get the histograms
+    _bounding_box = _label_text.get_window_extent(
+        renderer=ax.figure.canvas.get_renderer()
+    )
+    print(_bounding_box)
+    print(_bounding_box.width)
+    print(_bounding_box.height)
+    print(ax.transAxes.transform((_bounding_box.width, _bounding_box.height)))
+    print(
+        ax.transAxes.inverted().transform((_bounding_box.width, _bounding_box.height))
+    )
+    axes_label_coords = ax.transAxes.inverted().transform(
+        (_bounding_box.x0, _bounding_box.y1)
+    )
+    print(axes_label_coords)
+    if max_height is not None:
+        print(f"max_height: {max_height}")
+        display_coords = ax.transData.transform((max_height, max_height))
+        print(f"max height display coords: {display_coords}")
+        axes_coords = ax.transAxes.inverted().transform(display_coords)
+        print(f"max height axes coords: {axes_coords}")
+        # print(ax.transAxes.inverted().transform((max_height, max_height)))
+        print(axes_coords[-1], axes_label_coords[-1])
+        # if axes_coords[-1] > axes_label_coords[-1]:
+        if 1.2 * axes_coords[-1] > axes_label_coords[-1]:
+            # _offset_data_coords = ax.transData.inverted().transform(
+            #     (axes_coords[0], (axes_coords[-1] - axes_label_coords[-1]))
+            # )
+            _offset_data_coords = ax.transData.inverted().transform(
+                (axes_coords[0], (1.0 - axes_label_coords[-1]))
+            )
+            print(f"offset in data coords: {_offset_data_coords[-1]}")
+            _scale_factor = 1.2
+            _rounded_difference = _scale_factor * math.ceil(
+                math.fabs(_offset_data_coords[-1])
+            )
+            _current_ylim = ax.get_ylim()[-1]
+            ax.set_ylim(top=_current_ylim + _rounded_difference)
+
     return ax
+
+
+def _max_hist_height(hists, density, stacked=False):
+    if not density:
+        if stacked:
+            max_hist = max(utils.sum_hists(hists))
+        else:
+            max_hist = max([max(hist) for hist in hists])
+    else:
+        max_hist = max([max(hist.density()) for hist in hists])
+    return max_hist
 
 
 def _plot_uncertainty(model_hist, ax):
@@ -293,17 +347,17 @@ def shape_hist(hists, ax=None, **kwargs):
         ax = data_hist(
             _data_hist, uncert=data_uncert, label=data_label, density=density, ax=ax
         )
+    else:
+        # Avoid drawing twice
+        max_hist = _max_hist_height(hists, density)
+        ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     if semilogy:
         ax.semilogy()
         # Ensure enough space for legend
-        if not density:
-            max_hist = max([max(hist) for hist in hists])
-        else:
-            max_hist = max([max(hist.density()) for hist in hists])
+        max_hist = _max_hist_height(hists, density)
         ax.set_ylim(top=max_hist * 100)
 
-    ax = draw_experiment_label(ax, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
 
 
@@ -369,5 +423,8 @@ def stack_hist(hists, ax=None, **kwargs):
         # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 100)
 
-    ax = draw_experiment_label(ax, **kwargs)
+    # Avoid drawing twice
+    max_hist = _max_hist_height(hists, density=False, stacked=True)
+    ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
+
     return _plot_ax_kwargs(ax, **kwargs)
