@@ -187,7 +187,7 @@ def draw_experiment_label(ax, **kwargs):
     axes_label_coords = ax.transAxes.inverted().transform(
         (_bounding_box.x0, _bounding_box.y1)
     )
-    print(axes_label_coords)
+    print(f"bounding box axes coords: {axes_label_coords}")
     if max_height is not None:
         print(f"max_height: {max_height}")
         display_coords = ax.transData.transform((max_height, max_height))
@@ -205,10 +205,11 @@ def draw_experiment_label(ax, **kwargs):
                 (axes_coords[0], (1.0 - axes_label_coords[-1]))
             )
             print(f"offset in data coords: {_offset_data_coords[-1]}")
-            _scale_factor = 1.2
-            _rounded_difference = _scale_factor * math.ceil(
-                math.fabs(_offset_data_coords[-1])
-            )
+            _scale_factor = 1.3
+            # _rounded_difference = _scale_factor * math.ceil(
+            #     math.fabs(_offset_data_coords[-1])
+            # )
+            _rounded_difference = _scale_factor * math.fabs(_offset_data_coords[-1])
             _current_ylim = ax.get_ylim()[-1]
             ax.set_ylim(top=_current_ylim + _rounded_difference)
 
@@ -347,16 +348,16 @@ def shape_hist(hists, ax=None, **kwargs):
         ax = data_hist(
             _data_hist, uncert=data_uncert, label=data_label, density=density, ax=ax
         )
-    else:
-        # Avoid drawing twice
-        max_hist = _max_hist_height(hists, density)
-        ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     if semilogy:
         ax.semilogy()
         # Ensure enough space for legend
         max_hist = _max_hist_height(hists, density)
         ax.set_ylim(top=max_hist * 100)
+
+    # TODO: Avoid drawing twice
+    max_hist = _max_hist_height(hists, density)
+    ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     return _plot_ax_kwargs(ax, **kwargs)
 
@@ -423,7 +424,7 @@ def stack_hist(hists, ax=None, **kwargs):
         # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 100)
 
-    # Avoid drawing twice
+    # TODO: Avoid drawing twice
     max_hist = _max_hist_height(hists, density=False, stacked=True)
     ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
