@@ -498,20 +498,70 @@ def stack_hist(hists, ax=None, **kwargs):
     return _plot_ax_kwargs(ax, **kwargs)
 
 
-def ratio_plot(hist_nums, hist_denom, ax):
+def ratio_plot(hist_nums, hist_denom, ax, **kwargs):
+    """
+    Plot a numpy array not a histogram given the need to skip points
+    """
     hist_nums = hist_nums if isinstance(hist_nums, list) else [hist_nums]
     ratio_hist = [num_hist / hist_denom for num_hist in hist_nums]
 
+    # x-axis scale is totally off. Maybe need to just use mplhep for this
+    # ax.scatter(_bin_centers, ratio_hist[0].to_numpy()[0], color="black", marker="o")
+    # data_hist(ratio_hist, uncert=None, ax=ax)
+    central_value = kwargs.pop("central_value", 1.0)
+    xlim = kwargs.pop("xlim", None)
+    y_range = kwargs.pop("y_range", 0.5)
+    show_off_plot = kwargs.pop("off_plot", True)
+
     #     mplhep.histplot(ratio_hist, label="ratio", ax=ax)
-    mplhep.histplot(ratio_hist, ax=ax)
-    central_value = 1.0
-    y_range = 0.5
+    mplhep.histplot(ratio_hist, ax=ax, histtype="errorbar", color="black")
+    # _bins = ratio_hist[0].to_numpy()[1][:-1]
+    # print(ratio_hist[0].to_numpy()[0])
+    # print(_bins)
+    # _bin_width = _bins[1] - _bins[0]
+    # _bin_centers = _bins + (_bin_width/2.)
+    # Need to apply an offset shift of the bin width/2
+
     #     ax.axhline(central_value, color="black", label="data")
-    ax.axhline(central_value, color="black")
-    ax.set_ylim(central_value - y_range, central_value + y_range)
+    ax.axhline(central_value, color="black", linestyle="dashed")
+    if xlim is not None:
+        ax.set_xlim(xlim)
+    if y_range is not None:
+        ax.set_ylim(central_value - y_range, central_value + y_range)
+
+        if show_off_plot:
+            # If the ratio is off the plot, draw a red arrow pointing up or down
+            _marker_offset = 0.05  # FIXME: Should be marker size
+            _bins = ratio_hist[0].to_numpy()[1]
+            _bin_width = _bins[1] - _bins[0]
+            _bin_width_offset = _bin_width / 2.0
+            # FIXME: Need to also ensure not zero bins in the nuemerator
+            above_plot_idx = np.where(
+                ratio_hist[0].to_numpy()[0] > central_value + y_range
+            )
+            above_plot_x = (
+                np.array(ratio_hist[0].to_numpy()[1][:-1][above_plot_idx])
+                + _bin_width_offset
+            )
+            above_plot_y = (central_value + y_range - _marker_offset) * np.ones(
+                above_plot_x.size
+            )
+
+            below_plot_idx = np.where(
+                ratio_hist[0].to_numpy()[0] < central_value - y_range
+            )
+            below_plot_x = (
+                np.array(ratio_hist[0].to_numpy()[1][:-1][below_plot_idx])
+                + _bin_width_offset
+            )
+            below_plot_y = (central_value - y_range + _marker_offset) * np.ones(
+                below_plot_x.size
+            )
+
+            ax.scatter(above_plot_x, above_plot_y, color="red", marker="^")
+            ax.scatter(below_plot_x, below_plot_y, color="red", marker="v")
     ax.set_xlabel(r"$X$ Mass [GeV]")
-    #     ax.set_ylabel("Simulation/Data")
-    ax.set_ylabel("Sim/Data")
+    ax.set_ylabel("Data/Sim")
     #     ax.legend(loc="best")
 
     #     fig = ax.figure
@@ -553,7 +603,10 @@ def stack_ratio_plot(hists, **kwargs):
         ax=ax0,
     )
     num_hists = utils.sum_hists(hists)
-    ratio_plot(num_hists, _data_hist, ax=ax1)
+    # Author portest: This decision in the field to compare data to simulation
+    # seems methodologically wrong
+    xlim = ax0.get_xlim()
+    ratio_plot(_data_hist, num_hists, ax=ax1, xlim=xlim)
     ax0.figure.tight_layout()
 
     return ax0, ax1
