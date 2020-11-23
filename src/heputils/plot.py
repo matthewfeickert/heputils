@@ -136,6 +136,7 @@ def draw_experiment_label(ax, **kwargs):
 
     # Posible to get the current experiment from mplhep
 
+    # TODO: Figure out how to apply only once to avoid drawing multiple times
     label_info = get_experiment_info()
     status = kwargs.pop("status", label_info["status"])
     center_of_mass_energy = kwargs.pop(
@@ -144,16 +145,22 @@ def draw_experiment_label(ax, **kwargs):
     center_of_mass_energy_units = kwargs.pop(
         "center_of_mass_energy_units", label_info["center_of_mass_energy_units"]
     )
-    luminosity = kwargs.pop("luminosity", label_info["luminosity"])
-    luminosity_units = kwargs.pop("luminosity_units", label_info["luminosity_units"])
+    lumi_info = kwargs.pop("lumi_info", True)
+    if lumi_info:
+        luminosity = kwargs.pop("luminosity", label_info["luminosity"])
+        luminosity_units = kwargs.pop(
+            "luminosity_units", label_info["luminosity_units"]
+        )
 
     mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
 
     label_text_energy = (
         r"$\sqrt{s}=$" + rf"${center_of_mass_energy}~${center_of_mass_energy_units}"
     )
-    label_text_lumi = rf"${luminosity}$" + rf"$~{luminosity_units}$" + "$^{-1}$"
-    label_text = label_text_energy + ", " + label_text_lumi
+    label_text = label_text_energy
+    if lumi_info:
+        label_text_lumi = rf"${luminosity}$" + rf"$~{luminosity_units}$" + "$^{-1}$"
+        label_text += ", " + label_text_lumi
     ax.text(
         _horizontal_offset - 0.01,
         _vertical_offset - 0.08,
