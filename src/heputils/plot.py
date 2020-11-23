@@ -33,6 +33,7 @@ def set_style(style):
         style (str or `mplhep.style` dict): The experiment style
     """
     mplhep.set_style(style)
+    set_experiment_info(reset=True)
 
 
 def get_style(style=None):
@@ -59,6 +60,20 @@ def get_style(style=None):
     else:
         style = dict(plt.rcParams)
     return style
+
+
+def set_experiment_info(**kwargs):
+    global _experiment_label_info
+    reset = kwargs.pop("reset", False)
+    for key in _experiment_label_info.keys():
+        if key in kwargs:
+            _experiment_label_info[key] = kwargs[key]
+    if reset:
+        _experiment_label_info = _experiment_label_info_defaults.copy()
+
+
+def get_experiment_info():
+    return _experiment_label_info
 
 
 def _plot_ax_kwargs(ax, **kwargs):
@@ -104,6 +119,50 @@ def _plot_ax_kwargs(ax, **kwargs):
     ax.legend(handles, labels, loc=legend_loc)
 
     return (ax, ax.get_children()) if return_artists else ax
+
+
+def draw_experiment_label(ax, **kwargs):
+    """
+    Draw label information to the axes.
+
+    Args:
+        ax (`matplotlib.axes.Axes`): The axis object to mutate
+
+    Returns:
+        `matplotlib.axes.Axes`: matplotlib axis object
+    """
+    _horizontal_offset = 0.05
+    _vertical_offset = 0.95  # From mplhep
+
+    # Posible to get the current experiment from mplhep
+
+    label_info = get_experiment_info()
+    status = kwargs.pop("status", label_info["status"])
+    center_of_mass_energy = kwargs.pop(
+        "center_of_mass_energy", label_info["center_of_mass_energy"]
+    )
+    center_of_mass_energy_units = kwargs.pop(
+        "center_of_mass_energy_units", label_info["center_of_mass_energy_units"]
+    )
+    luminosity = kwargs.pop("luminosity", label_info["luminosity"])
+    luminosity_units = kwargs.pop("luminosity_units", label_info["luminosity_units"])
+
+    mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
+
+    label_text_energy = (
+        r"$\sqrt{s}=$" + rf"${center_of_mass_energy}~${center_of_mass_energy_units}"
+    )
+    label_text_lumi = rf"${luminosity}$" + rf"$~{luminosity_units}$" + "$^{-1}$"
+    label_text = label_text_energy + ", " + label_text_lumi
+    ax.text(
+        _horizontal_offset - 0.01,
+        _vertical_offset - 0.08,
+        label_text,
+        horizontalalignment="left",
+        verticalalignment="top",
+        transform=ax.transAxes,
+    )
+    return ax
 
 
 def _plot_uncertainty(model_hist, ax):
@@ -173,6 +232,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         ax=ax,
     )
 
+    ax = draw_experiment_label(ax, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
 
 
@@ -236,6 +296,7 @@ def shape_hist(hists, ax=None, **kwargs):
             max_hist = max([max(hist.density()) for hist in hists])
         ax.set_ylim(top=max_hist * 100)
 
+    ax = draw_experiment_label(ax, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
 
 
@@ -301,4 +362,5 @@ def stack_hist(hists, ax=None, **kwargs):
         # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 100)
 
+    ax = draw_experiment_label(ax, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
