@@ -6,6 +6,17 @@ import mplhep
 import numpy as np
 from . import utils
 
+# To be able to reset
+_experiment_label_info_defaults = {
+    "status": "Internal",
+    "center_of_mass_energy": 13,
+    "center_of_mass_energy_units": "TeV",
+    "luminosity": 132,
+    "luminosity_units": "fb",
+}
+global _experiment_label_info
+_experiment_label_info = _experiment_label_info_defaults.copy()
+
 
 def set_style(style):
     """
