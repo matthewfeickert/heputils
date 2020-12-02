@@ -26,14 +26,13 @@ python -m pip install heputils
 ### Development releases
 
 If you want to install _unsupported_ development releases you can do so from TestPyPI.
-First install the library like normal from PyPI to get stable releases of all dependencies
+**First** install `heputils` like normal from PyPI to get stable releases of all dependencies
 
 ```
 python -m pip install heputils
 ```
 
-**then** install the development release of `heputils` from TestPyPI
-with the following
+**then** install the development release of `heputils` from TestPyPI with the following
 
 ```
 python -m pip install --upgrade --extra-index-url https://test.pypi.org/simple/ --pre heputils
