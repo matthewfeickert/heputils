@@ -4,7 +4,20 @@ import matplotlib.pyplot as plt
 from mplhep import histplot
 import mplhep
 import numpy as np
+import math
 from . import utils
+
+# To be able to reset
+_experiment_label_info_defaults = {
+    "name": None,
+    "status": "Internal",
+    "center_of_mass_energy": 13,
+    "center_of_mass_energy_units": "TeV",
+    "luminosity": 132,
+    "luminosity_units": "fb",
+}
+global _experiment_label_info
+_experiment_label_info = _experiment_label_info_defaults.copy()
 
 
 def set_style(style):
@@ -22,6 +35,9 @@ def set_style(style):
         style (str or `mplhep.style` dict): The experiment style
     """
     mplhep.set_style(style)
+    set_experiment_info(reset=True)
+    if isinstance(style, str):
+        set_experiment_info(name=style.lower())
 
 
 def get_style(style=None):
@@ -48,6 +64,67 @@ def get_style(style=None):
     else:
         style = dict(plt.rcParams)
     return style
+
+
+def set_experiment_info(**kwargs):
+    """
+    Set the experiment level information displayed in the label.
+
+    Example:
+
+        >>> import heputils
+        >>> heputils.plot.set_style("ATLAS")
+        >>> heputils.plot.set_experiment_info(status="Internal")
+        >>> heputils.plot.set_experiment_info(
+        ...     center_of_mass_energy=13,
+        ...     center_of_mass_energy_units="TeV",
+        ...     luminosity=132,
+        ...     luminosity_units="fb",
+        ... )
+        >>> for key, info in heputils.plot.get_experiment_info().items():
+        ...     print(f"{key}: {info}")
+        ...
+        name: atlas
+        status: Internal
+        center_of_mass_energy: 13
+        center_of_mass_energy_units: TeV
+        luminosity: 132
+        luminosity_units: fb
+
+    Args:
+        kwargs (dict): The keyword args used to describe the experiment.
+    """
+    global _experiment_label_info
+    reset = kwargs.pop("reset", False)
+    for key in _experiment_label_info.keys():
+        if key in kwargs:
+            _experiment_label_info[key] = kwargs[key]
+    if reset:
+        _experiment_label_info = _experiment_label_info_defaults.copy()
+
+
+def get_experiment_info():
+    """
+    Retrieve the current experiment level information.
+
+    Example:
+
+        >>> import heputils
+        >>> heputils.plot.set_style("ATLAS")
+        >>> for key, info in heputils.plot.get_experiment_info().items():
+        ...     print(f"{key}: {info}")
+        ...
+        name: atlas
+        status: Internal
+        center_of_mass_energy: 13
+        center_of_mass_energy_units: TeV
+        luminosity: 132
+        luminosity_units: fb
+
+    Returns:
+        dict: The dictionary of descriptors of the experiment.
+    """
+    return _experiment_label_info
 
 
 def _plot_ax_kwargs(ax, **kwargs):
@@ -93,6 +170,113 @@ def _plot_ax_kwargs(ax, **kwargs):
     ax.legend(handles, labels, loc=legend_loc)
 
     return (ax, ax.get_children()) if return_artists else ax
+
+
+def draw_experiment_label(ax, **kwargs):
+    """
+    Draw label information to the axes.
+
+    Args:
+        ax (`matplotlib.axes.Axes`): The axis object to mutate
+
+    Returns:
+        `matplotlib.axes.Axes`: matplotlib axis object
+    """
+    _horizontal_offset = 0.05
+    _vertical_offset = 0.95  # From mplhep
+
+    # TODO: Figure out how to apply only once to avoid drawing multiple times
+    label_info = get_experiment_info()
+    status = kwargs.pop("status", label_info["status"])
+    center_of_mass_energy = kwargs.pop(
+        "center_of_mass_energy", label_info["center_of_mass_energy"]
+    )
+    center_of_mass_energy_units = kwargs.pop(
+        "center_of_mass_energy_units", label_info["center_of_mass_energy_units"]
+    )
+    lumi_info = kwargs.pop("lumi_info", True)
+    if lumi_info:
+        luminosity = kwargs.pop("luminosity", label_info["luminosity"])
+        luminosity_units = kwargs.pop(
+            "luminosity_units", label_info["luminosity_units"]
+        )
+    max_height = kwargs.pop("max_height", None)
+    semilogy = kwargs.pop("logy", None)
+    density = kwargs.pop("density", False)
+
+    # Make experiment agnostic
+    getattr(mplhep, label_info["name"]).label(loc=1, llabel=status, rlabel="", ax=ax)
+
+    label_text_energy = (
+        r"$\sqrt{s}=$" + rf"${center_of_mass_energy}~${center_of_mass_energy_units}"
+    )
+    label_text = label_text_energy
+    if lumi_info:
+        label_text_lumi = rf"${luminosity}$" + rf"$~{luminosity_units}$" + "$^{-1}$"
+        label_text += ", " + label_text_lumi
+    _label_text = ax.text(
+        _horizontal_offset - 0.01,
+        _vertical_offset - 0.08,
+        label_text,
+        horizontalalignment="left",
+        verticalalignment="top",
+        transform=ax.transAxes,
+    )
+
+    # https://matplotlib.org/tutorials/advanced/transforms_tutorial.html
+    bounding_box = _label_text.get_window_extent(
+        renderer=ax.figure.canvas.get_renderer()
+    )
+    bb_label_axes_coords = ax.transAxes.inverted().transform(
+        (bounding_box.xmin, bounding_box.ymin)
+    )
+    if max_height is not None:
+        # max_height is in data coordinates, so transform to display coordinates
+        # and then transform to axes coordinates
+        # 0 used as generic standin, but has no meaning
+        display_coords = ax.transData.transform((0.0, max_height))
+        axes_coords = ax.transAxes.inverted().transform(display_coords)
+
+        # Scale density plots differently from other semilogy plots
+        _scale_factor = 1.7 if semilogy and not density else 1.25
+        if _scale_factor * axes_coords[1] > bb_label_axes_coords[1]:
+            offset_display_coords = ax.transAxes.transform(
+                (
+                    axes_coords[0],
+                    (_scale_factor * axes_coords[1]) - bb_label_axes_coords[1],
+                )
+            )
+            offset_data_coords = ax.transData.inverted().transform(
+                _scale_factor * offset_display_coords
+            )
+            _current_ylim = ax.get_ylim()[1]
+            ax.set_ylim(top=_current_ylim + math.fabs(offset_data_coords[1]))
+
+    return ax
+
+
+def _max_hist_height(hists, density, stacked=False):
+    """
+    Determine the maximum entry in a list of histograms.
+
+    Args:
+        hists (`lst`): List of histograms
+        density (`bool`): If the histograms are density histograms
+        stacked (`bool`): If the histograms are stacked histograms
+
+    Returns:
+        `float`: The maximum value of any of the given histograms.
+    """
+    if not isinstance(hists, list):
+        hists = [hists]
+    if not density:
+        if stacked:
+            max_hist = max(utils.sum_hists(hists))
+        else:
+            max_hist = max([max(hist) for hist in hists])
+    else:
+        max_hist = max([max(hist.density()) for hist in hists])
+    return max_hist
 
 
 def _plot_uncertainty(model_hist, ax):
@@ -149,6 +333,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     density = kwargs.pop("density", False)
     if density:
         histtype = "step"
+        uncert = None
     else:
         histtype = "errorbar"
 
@@ -162,6 +347,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         ax=ax,
     )
 
+    ax = draw_experiment_label(ax, density=density, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
 
 
@@ -219,11 +405,19 @@ def shape_hist(hists, ax=None, **kwargs):
     if semilogy:
         ax.semilogy()
         # Ensure enough space for legend
-        if not density:
-            max_hist = max([max(hist) for hist in hists])
-        else:
-            max_hist = max([max(hist.density()) for hist in hists])
+        max_hist = _max_hist_height(hists, density)
         ax.set_ylim(top=max_hist * 100)
+
+    # TODO: Avoid drawing twice
+    if _data_hist is not None:
+        max_hist = max(
+            _max_hist_height(hists, density), _max_hist_height(_data_hist, density)
+        )
+    else:
+        max_hist = _max_hist_height(hists, density)
+    ax = draw_experiment_label(
+        ax, max_height=max_hist, logy=semilogy, density=density, **kwargs
+    )
 
     return _plot_ax_kwargs(ax, **kwargs)
 
@@ -289,5 +483,9 @@ def stack_hist(hists, ax=None, **kwargs):
         ax.semilogy()
         # Ensure enough space for legend
         ax.set_ylim(top=max(stack_hist) * 100)
+
+    # TODO: Avoid drawing twice
+    max_hist = _max_hist_height(hists, density=False, stacked=True)
+    ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     return _plot_ax_kwargs(ax, **kwargs)
