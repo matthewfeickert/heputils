@@ -205,6 +205,8 @@ def draw_experiment_label(ax, **kwargs):
 
 
 def _max_hist_height(hists, density, stacked=False):
+    if not isinstance(hists, list):
+        hists = [hists]
     if not density:
         if stacked:
             max_hist = max(utils.sum_hists(hists))
@@ -344,7 +346,12 @@ def shape_hist(hists, ax=None, **kwargs):
         ax.set_ylim(top=max_hist * 100)
 
     # TODO: Avoid drawing twice
-    max_hist = _max_hist_height(hists, density)
+    if _data_hist is not None:
+        max_hist = max(
+            _max_hist_height(hists, density), _max_hist_height(_data_hist, density)
+        )
+    else:
+        max_hist = _max_hist_height(hists, density)
     ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     return _plot_ax_kwargs(ax, **kwargs)
