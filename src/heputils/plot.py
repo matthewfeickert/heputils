@@ -277,6 +277,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     density = kwargs.pop("density", False)
     if density:
         histtype = "step"
+        uncert = None
     else:
         histtype = "errorbar"
 
