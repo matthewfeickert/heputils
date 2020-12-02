@@ -154,6 +154,7 @@ def draw_experiment_label(ax, **kwargs):
         )
     max_height = kwargs.pop("max_height", None)
 
+    # TODO: Make experiment agnostic
     mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
 
     label_text_energy = (
@@ -173,45 +174,32 @@ def draw_experiment_label(ax, **kwargs):
     )
 
     # https://matplotlib.org/tutorials/advanced/transforms_tutorial.html
-    # TODO: Make this work for any artist, so don't have to get the histograms
-    _bounding_box = _label_text.get_window_extent(
+    bounding_box = _label_text.get_window_extent(
         renderer=ax.figure.canvas.get_renderer()
     )
-    print(_bounding_box)
-    print(_bounding_box.width)
-    print(_bounding_box.height)
-    print(ax.transAxes.transform((_bounding_box.width, _bounding_box.height)))
-    print(
-        ax.transAxes.inverted().transform((_bounding_box.width, _bounding_box.height))
+    bb_label_axes_coords = ax.transAxes.inverted().transform(
+        (bounding_box.xmin, bounding_box.ymin)
     )
-    axes_label_coords = ax.transAxes.inverted().transform(
-        (_bounding_box.x0, _bounding_box.y1)
-    )
-    print(f"bounding box axes coords: {axes_label_coords}")
     if max_height is not None:
-        print(f"max_height: {max_height}")
-        display_coords = ax.transData.transform((max_height, max_height))
-        print(f"max height display coords: {display_coords}")
+        # max_height is in data coordinates, so transform to display coordinates
+        # and then transform to axes coordinates
+        # 0 used as generic standin, but has no meaning
+        display_coords = ax.transData.transform((0.0, max_height))
         axes_coords = ax.transAxes.inverted().transform(display_coords)
-        print(f"max height axes coords: {axes_coords}")
-        # print(ax.transAxes.inverted().transform((max_height, max_height)))
-        print(axes_coords[-1], axes_label_coords[-1])
-        # if axes_coords[-1] > axes_label_coords[-1]:
-        if 1.2 * axes_coords[-1] > axes_label_coords[-1]:
-            # _offset_data_coords = ax.transData.inverted().transform(
-            #     (axes_coords[0], (axes_coords[-1] - axes_label_coords[-1]))
-            # )
-            _offset_data_coords = ax.transData.inverted().transform(
-                (axes_coords[0], (1.0 - axes_label_coords[-1]))
+
+        _scale_factor = 1.25
+        if _scale_factor * axes_coords[1] > bb_label_axes_coords[1]:
+            offset_display_coords = ax.transAxes.transform(
+                (
+                    axes_coords[0],
+                    (_scale_factor * axes_coords[1]) - bb_label_axes_coords[1],
+                )
             )
-            print(f"offset in data coords: {_offset_data_coords[-1]}")
-            _scale_factor = 1.3
-            # _rounded_difference = _scale_factor * math.ceil(
-            #     math.fabs(_offset_data_coords[-1])
-            # )
-            _rounded_difference = _scale_factor * math.fabs(_offset_data_coords[-1])
-            _current_ylim = ax.get_ylim()[-1]
-            ax.set_ylim(top=_current_ylim + _rounded_difference)
+            offset_data_coords = ax.transData.inverted().transform(
+                _scale_factor * offset_display_coords
+            )
+            _current_ylim = ax.get_ylim()[1]
+            ax.set_ylim(top=_current_ylim + math.fabs(offset_data_coords[1]))
 
     return ax
 
