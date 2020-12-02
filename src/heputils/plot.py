@@ -67,6 +67,33 @@ def get_style(style=None):
 
 
 def set_experiment_info(**kwargs):
+    """
+    Set the experiment level information displayed in the label.
+
+    Example:
+
+        >>> import heputils
+        >>> heputils.plot.set_style("ATLAS")
+        >>> heputils.plot.set_experiment_info(status="Internal")
+        >>> heputils.plot.set_experiment_info(
+        ...     center_of_mass_energy=13,
+        ...     center_of_mass_energy_units="TeV",
+        ...     luminosity=132,
+        ...     luminosity_units="fb",
+        ... )
+        >>> for key, info in heputils.plot.get_experiment_info().items():
+        ...     print(f"{key}: {info}")
+        ...
+        name: atlas
+        status: Internal
+        center_of_mass_energy: 13
+        center_of_mass_energy_units: TeV
+        luminosity: 132
+        luminosity_units: fb
+
+    Args:
+        kwargs (dict): The keyword args used to describe the experiment.
+    """
     global _experiment_label_info
     reset = kwargs.pop("reset", False)
     for key in _experiment_label_info.keys():
@@ -77,6 +104,26 @@ def set_experiment_info(**kwargs):
 
 
 def get_experiment_info():
+    """
+    Retrieve the current experiment level information.
+
+    Example:
+
+        >>> import heputils
+        >>> heputils.plot.set_style("ATLAS")
+        >>> for key, info in heputils.plot.get_experiment_info().items():
+        ...     print(f"{key}: {info}")
+        ...
+        name: atlas
+        status: Internal
+        center_of_mass_energy: 13
+        center_of_mass_energy_units: TeV
+        luminosity: 132
+        luminosity_units: fb
+
+    Returns:
+        dict: The dictionary of descriptors of the experiment.
+    """
     return _experiment_label_info
 
 
@@ -137,8 +184,6 @@ def draw_experiment_label(ax, **kwargs):
     """
     _horizontal_offset = 0.05
     _vertical_offset = 0.95  # From mplhep
-
-    # Posible to get the current experiment from mplhep
 
     # TODO: Figure out how to apply only once to avoid drawing multiple times
     label_info = get_experiment_info()
@@ -211,6 +256,17 @@ def draw_experiment_label(ax, **kwargs):
 
 
 def _max_hist_height(hists, density, stacked=False):
+    """
+    Determine the maximum entry in a list of histograms.
+
+    Args:
+        hists (`lst`): List of histograms
+        density (`bool`): If the histograms are density histograms
+        stacked (`bool`): If the histograms are stacked histograms
+
+    Returns:
+        `float`: The maximum value of any of the given histograms.
+    """
     if not isinstance(hists, list):
         hists = [hists]
     if not density:
