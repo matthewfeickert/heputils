@@ -153,6 +153,8 @@ def draw_experiment_label(ax, **kwargs):
             "luminosity_units", label_info["luminosity_units"]
         )
     max_height = kwargs.pop("max_height", None)
+    semilogy = kwargs.pop("logy", None)
+    density = kwargs.pop("density", False)
 
     # TODO: Make experiment agnostic
     mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
@@ -187,7 +189,8 @@ def draw_experiment_label(ax, **kwargs):
         display_coords = ax.transData.transform((0.0, max_height))
         axes_coords = ax.transAxes.inverted().transform(display_coords)
 
-        _scale_factor = 1.25
+        # Scale density plots differently from other semilogy plots
+        _scale_factor = 1.7 if semilogy and not density else 1.25
         if _scale_factor * axes_coords[1] > bb_label_axes_coords[1]:
             offset_display_coords = ax.transAxes.transform(
                 (
@@ -284,7 +287,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         ax=ax,
     )
 
-    ax = draw_experiment_label(ax, **kwargs)
+    ax = draw_experiment_label(ax, density=density, **kwargs)
     return _plot_ax_kwargs(ax, **kwargs)
 
 
@@ -352,7 +355,9 @@ def shape_hist(hists, ax=None, **kwargs):
         )
     else:
         max_hist = _max_hist_height(hists, density)
-    ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
+    ax = draw_experiment_label(
+        ax, max_height=max_hist, logy=semilogy, density=density, **kwargs
+    )
 
     return _plot_ax_kwargs(ax, **kwargs)
 
