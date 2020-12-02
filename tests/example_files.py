@@ -1,6 +1,6 @@
 import numpy as np
 import json
-import uproot as uproot3
+import uproot3
 
 _bins = np.arange(0, 10200, 200).tolist()
 
