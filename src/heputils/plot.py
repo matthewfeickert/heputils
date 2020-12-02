@@ -9,6 +9,7 @@ from . import utils
 
 # To be able to reset
 _experiment_label_info_defaults = {
+    "name": None,
     "status": "Internal",
     "center_of_mass_energy": 13,
     "center_of_mass_energy_units": "TeV",
@@ -35,6 +36,8 @@ def set_style(style):
     """
     mplhep.set_style(style)
     set_experiment_info(reset=True)
+    if isinstance(style, str):
+        set_experiment_info(name=style.lower())
 
 
 def get_style(style=None):
@@ -156,8 +159,8 @@ def draw_experiment_label(ax, **kwargs):
     semilogy = kwargs.pop("logy", None)
     density = kwargs.pop("density", False)
 
-    # TODO: Make experiment agnostic
-    mplhep.atlas.label(loc=1, llabel=status, rlabel="", ax=ax)
+    # Make experiment agnostic
+    getattr(mplhep, label_info["name"]).label(loc=1, llabel=status, rlabel="", ax=ax)
 
     label_text_energy = (
         r"$\sqrt{s}=$" + rf"${center_of_mass_energy}~${center_of_mass_energy_units}"
