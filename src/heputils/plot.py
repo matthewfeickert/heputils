@@ -294,13 +294,16 @@ def _plot_uncertainty(model_hist, ax):
     stat_uncert = np.sqrt(model_hist)
     bin_centers = model_hist.axes.centers[0]
     bin_widths = model_hist.axes.widths[0]
+    bar_bottom = model_hist - stat_uncert
+    # Ensure uncertainties don't extend below 0
+    bar_bottom[bar_bottom < 0] = 0
     uncert_label = "Stat Uncertainty"
 
     ax.bar(
         bin_centers,
         height=2 * stat_uncert,
         width=bin_widths,
-        bottom=model_hist - stat_uncert,
+        bottom=bar_bottom,
         fill=False,
         linewidth=0,
         edgecolor="gray",
