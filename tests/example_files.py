@@ -228,7 +228,7 @@ hists["signal"] = {
 
 
 def make_data_hist(hists):
-    # Make pseudodata from Poisson fluctuaions
+    # Make pseudodata from Poisson fluctuations
     data_hist = []
     for key in hists.keys():
         counts = np.array(hists[key]["counts"])
