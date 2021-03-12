@@ -2,7 +2,7 @@ import numpy as np
 import json
 import uproot3
 
-_bins = np.arange(0, 10200, 200).tolist()
+_bins = np.arange(0, 1020, 20).tolist()
 
 hists = {}
 hists["ttbar"] = {
@@ -228,7 +228,7 @@ hists["signal"] = {
 
 
 def make_data_hist(hists):
-    # Make pseudodata from Poisson fluctuaions
+    # Make pseudodata from Poisson fluctuations
     data_hist = []
     for key in hists.keys():
         counts = np.array(hists[key]["counts"])
