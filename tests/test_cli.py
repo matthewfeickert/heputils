@@ -1,6 +1,7 @@
 import shlex
-import heputils
 import time
+
+import heputils
 
 
 def test_version(script_runner):

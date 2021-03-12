@@ -1,10 +1,12 @@
 """Visualization module."""
 
+import math
+
 import matplotlib.pyplot as plt
-from mplhep import histplot
 import mplhep
 import numpy as np
-import math
+from mplhep import histplot
+
 from . import utils
 
 # To be able to reset

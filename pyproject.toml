@@ -34,3 +34,10 @@ pyupgrade = 1
 
 [tool.nbqa.addopts]
 pyupgrade = ["--py36-plus"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+force_single_line = true
+ignore_comments = true
+float_to_top = true
