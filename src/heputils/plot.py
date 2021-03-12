@@ -394,6 +394,7 @@ def shape_hist(hists, ax=None, **kwargs):
         stack=False,
         histtype=histtype,
         density=density,
+        yerr=False,
         label=labels,
         color=color,
         alpha=alpha,
