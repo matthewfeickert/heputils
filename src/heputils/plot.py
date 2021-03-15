@@ -338,7 +338,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
     density = kwargs.pop("density", False)
     if density:
         histtype = "step"
-        uncert = None
+        uncert = False  # histplot treats yerr as iterable or bool
     else:
         histtype = "errorbar"
 
