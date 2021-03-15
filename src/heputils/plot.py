@@ -273,9 +273,9 @@ def _max_hist_height(hists, density, stacked=False):
         hists = [hists]
     if not density:
         if stacked:
-            max_hist = max(utils.sum_hists(hists))
+            max_hist = max(utils.sum_hists(hists).values())
         else:
-            max_hist = max([max(hist) for hist in hists])
+            max_hist = max([max(hist.values()) for hist in hists])
     else:
         max_hist = max([max(hist.density()) for hist in hists])
     return max_hist
@@ -293,10 +293,10 @@ def _plot_uncertainty(model_hist, ax):
         `matplotlib.axes.Axes`: The axis the bar plot is drawn on
     """
 
-    stat_uncert = np.sqrt(model_hist)
+    stat_uncert = np.sqrt(model_hist.values())
     bin_centers = model_hist.axes.centers[0]
     bin_widths = model_hist.axes.widths[0]
-    bar_bottom = model_hist - stat_uncert
+    bar_bottom = model_hist.values() - stat_uncert
     # Ensure uncertainties don't extend below 0
     bar_bottom[bar_bottom < 0] = 0
     uncert_label = "Stat Uncertainty"
@@ -328,7 +328,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         `matplotlib.axes.Axes`: matplotlib subplot axis object
     """
     if uncert is None:
-        uncert = np.sqrt(hist)
+        uncert = np.sqrt(hist.values())
     if ax is None:
         ax = plt.gca()
 
@@ -488,7 +488,7 @@ def stack_hist(hists, ax=None, **kwargs):
     if semilogy:
         ax.semilogy()
         # Ensure enough space for legend
-        ax.set_ylim(top=max(stack_hist) * 100)
+        ax.set_ylim(top=max(stack_hist.values()) * 100)
 
     # TODO: Avoid drawing twice
     max_hist = _max_hist_height(hists, density=False, stacked=True)
