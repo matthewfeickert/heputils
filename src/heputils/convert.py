@@ -27,7 +27,7 @@ def uproot_to_hist(uproot_hist):
     """
     # This is a one liner once bug is fixed
     # c.f. https://github.com/scikit-hep/hist/issues/115
-    # return uproot_hist.to_hist()
+    return uproot_hist.to_hist()
     values, edges = uproot_hist.to_numpy()
     return numpy_to_hist(values, edges)
 
