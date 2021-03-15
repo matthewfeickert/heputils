@@ -7,6 +7,8 @@ from hist import Hist
 def uproot_to_hist(uproot_hist):
     """
     Convert an `uproot` histogram to a `hist` histogram.
+    DEPRECATION: This should now longer be needed as of `heputils` `v0.0.6` and
+    will be removed in a later version of `heputils`.
 
     Example:
 
@@ -25,11 +27,7 @@ def uproot_to_hist(uproot_hist):
     Returns:
         hist.Hist.hist: The converted `hist` histogram
     """
-    # This is a one liner once bug is fixed
-    # c.f. https://github.com/scikit-hep/hist/issues/115
-    # return uproot_hist.to_hist()
-    values, edges = uproot_hist.to_numpy()
-    return numpy_to_hist(values, edges)
+    return uproot_hist.to_hist()
 
 
 def uproot_to_numpy(uproot_hist):
