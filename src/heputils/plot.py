@@ -510,7 +510,10 @@ def ratio_plot(hist_nums, hist_denom, ax, **kwargs):
     # data_hist(ratio_hist, uncert=None, ax=ax)
     central_value = kwargs.pop("central_value", 1.0)
     xlim = kwargs.pop("xlim", None)
+    # Is there a cleaner way to ensure 0.5 as default?
     y_range = kwargs.pop("y_range", 0.5)
+    if y_range is None:
+        y_range = 0.5
     show_off_plot = kwargs.pop("off_plot", True)
 
     #     mplhep.histplot(ratio_hist, label="ratio", ax=ax)
@@ -577,7 +580,8 @@ def stack_ratio_plot(hists, **kwargs):
     """
     _fig_width, _fig_height = get_style()["figure.figsize"]
     # fig = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
-    _ = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
+    # _ = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
+    _ = plt.figure(figsize=(_fig_width, 1.25 * _fig_height))
     gs = gridspec.GridSpec(2, 1, height_ratios=[3.5, 1])
     ax0 = plt.subplot(gs[0])
     ax1 = plt.subplot(gs[1])
@@ -591,6 +595,7 @@ def stack_ratio_plot(hists, **kwargs):
     alpha = kwargs.pop("alpha", None)
     semilogy = kwargs.pop("logy", True)
     _data_hist = kwargs.pop("data_hist", None)
+    y_range = kwargs.pop("y_range", None)
 
     ax0 = stack_hist(
         hists,
@@ -603,10 +608,10 @@ def stack_ratio_plot(hists, **kwargs):
         ax=ax0,
     )
     num_hists = utils.sum_hists(hists)
-    # Author portest: This decision in the field to compare data to simulation
+    # Author protest: This decision in the field to compare data to simulation
     # seems methodologically wrong
     xlim = ax0.get_xlim()
-    ratio_plot(_data_hist, num_hists, ax=ax1, xlim=xlim)
+    ratio_plot(_data_hist, num_hists, ax=ax1, xlim=xlim, y_range=y_range)
     ax0.figure.tight_layout()
 
     return ax0, ax1
