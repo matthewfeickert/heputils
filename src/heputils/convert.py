@@ -7,7 +7,8 @@ from hist import Hist
 def uproot_to_hist(uproot_hist):
     """
     Convert an `uproot` histogram to a `hist` histogram.
-    Note: This should now longer be needed as of `heputils` `v0.0.6`.
+    DEPRECATION: This should now longer be needed as of `heputils` `v0.0.6` and
+    will be removed in a later version of `heputils`.
 
     Example:
 
