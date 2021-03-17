@@ -1,14 +1,13 @@
 """Convert between different histogram representations"""
 
 import hist
+import numpy as np
 from hist import Hist
 
 
 def uproot_to_hist(uproot_hist):
     """
     Convert an `uproot` histogram to a `hist` histogram.
-    DEPRECATION: This should now longer be needed as of `heputils` `v0.0.6` and
-    will be removed in a later version of `heputils`.
 
     Example:
 
@@ -27,7 +26,8 @@ def uproot_to_hist(uproot_hist):
     Returns:
         hist.Hist.hist: The converted `hist` histogram
     """
-    return uproot_hist.to_hist()
+    values, edges = uproot_hist.to_numpy()
+    return numpy_to_hist(values, edges)
 
 
 def uproot_to_numpy(uproot_hist):
@@ -58,7 +58,9 @@ def numpy_to_hist(values, edges, name=None):
     """
     _hist = Hist(
         hist.axis.Regular(len(edges) - 1, edges[0], edges[-1], name=name),
-        storage=hist.storage.Double(),
+        storage=hist.storage.Weight(),
     )
-    _hist[:] = values
+    # Poisson variance equals values
+    # stack values, variances
+    _hist[...] = np.stack([values, values], axis=-1)
     return _hist
