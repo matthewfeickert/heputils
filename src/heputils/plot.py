@@ -293,7 +293,7 @@ def _plot_uncertainty(model_hist, ax):
         `matplotlib.axes.Axes`: The axis the bar plot is drawn on
     """
 
-    stat_uncert = np.sqrt(model_hist.values())
+    stat_uncert = np.sqrt(model_hist.variances())
     bin_centers = model_hist.axes.centers[0]
     bin_widths = model_hist.axes.widths[0]
     bar_bottom = model_hist.values() - stat_uncert
