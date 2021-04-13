@@ -53,6 +53,6 @@ jobs:
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'matthewfeickert/heputils'
-      uses: pypa/gh-action-pypi-publish@v1.4.1
+      uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         password: ${{ secrets.pypi_password }}
