@@ -2,7 +2,6 @@
 
 import math
 
-import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import mplhep
 import numpy as np
@@ -498,95 +497,19 @@ def stack_hist(hists, ax=None, **kwargs):
     return _plot_ax_kwargs(ax, **kwargs)
 
 
-def ratio_plot(hist_nums, hist_denom, ax, **kwargs):
-    """
-    Plot a numpy array not a histogram given the need to skip points
-    """
-    hist_nums = hist_nums if isinstance(hist_nums, list) else [hist_nums]
-    ratio_hist = [num_hist / hist_denom for num_hist in hist_nums]
-
-    # x-axis scale is totally off. Maybe need to just use mplhep for this
-    # ax.scatter(_bin_centers, ratio_hist[0].to_numpy()[0], color="black", marker="o")
-    # data_hist(ratio_hist, uncert=None, ax=ax)
-    central_value = kwargs.pop("central_value", 1.0)
-    xlim = kwargs.pop("xlim", None)
-    # Is there a cleaner way to ensure 0.5 as default?
-    y_range = kwargs.pop("y_range", 0.5)
-    if y_range is None:
-        y_range = 0.5
-    show_off_plot = kwargs.pop("off_plot", True)
-
-    #     mplhep.histplot(ratio_hist, label="ratio", ax=ax)
-    mplhep.histplot(ratio_hist, ax=ax, histtype="errorbar", color="black")
-    # _bins = ratio_hist[0].to_numpy()[1][:-1]
-    # print(ratio_hist[0].to_numpy()[0])
-    # print(_bins)
-    # _bin_width = _bins[1] - _bins[0]
-    # _bin_centers = _bins + (_bin_width/2.)
-    # Need to apply an offset shift of the bin width/2
-
-    #     ax.axhline(central_value, color="black", label="data")
-    ax.axhline(central_value, color="black", linestyle="dashed")
-    if xlim is not None:
-        ax.set_xlim(xlim)
-    if y_range is not None:
-        ax.set_ylim(central_value - y_range, central_value + y_range)
-
-        if show_off_plot:
-            # If the ratio is off the plot, draw a red arrow pointing up or down
-            _marker_offset = 0.05  # FIXME: Should be marker size
-            _bins = ratio_hist[0].to_numpy()[1]
-            _bin_width = _bins[1] - _bins[0]
-            _bin_width_offset = _bin_width / 2.0
-            # FIXME: Need to also ensure not zero bins in the nuemerator
-            above_plot_idx = np.where(
-                ratio_hist[0].to_numpy()[0] > central_value + y_range
-            )
-            above_plot_x = (
-                np.array(ratio_hist[0].to_numpy()[1][:-1][above_plot_idx])
-                + _bin_width_offset
-            )
-            above_plot_y = (central_value + y_range - _marker_offset) * np.ones(
-                above_plot_x.size
-            )
-
-            below_plot_idx = np.where(
-                ratio_hist[0].to_numpy()[0] < central_value - y_range
-            )
-            below_plot_x = (
-                np.array(ratio_hist[0].to_numpy()[1][:-1][below_plot_idx])
-                + _bin_width_offset
-            )
-            below_plot_y = (central_value - y_range + _marker_offset) * np.ones(
-                below_plot_x.size
-            )
-
-            ax.scatter(above_plot_x, above_plot_y, color="red", marker="^")
-            ax.scatter(below_plot_x, below_plot_y, color="red", marker="v")
-    ax.set_xlabel(r"$X$ Mass [GeV]")
-    ax.set_ylabel("Data/Sim")
-    #     ax.legend(loc="best")
-
-    #     fig = ax.figure
-    #     fig_width, fig_height = heputils.plot.get_style()["figure.figsize"]
-    #     fig.set_size_inches(fig_width, 0.8*fig_height)
-
-    return ax
-
-
 def stack_ratio_plot(hists, **kwargs):
     """
     Stack plot on top, ratio plot on bottom
     """
     fig = kwargs.pop("fig", plt.gcf())
 
-    # Scale figure height to deal with ratio being added
+    # Scale figure height to deal with ratio subplot being added
     fig_height_scale = kwargs.pop("fig_height_scale", 1.25)
     _fig_width, _fig_height = get_style()["figure.figsize"]
     fig.set_size_inches(_fig_width, _fig_height * fig_height_scale, forward=True)
 
+    # Setup figure subplot grid and axis dict for hist.plot_ratio
     grid = fig.add_gridspec(2, 1, hspace=0, height_ratios=[3, 1])
-
     main_ax = fig.add_subplot(grid[0])
     subplot_ax = fig.add_subplot(grid[1], sharex=main_ax)
     ax_dict = {"main_ax": main_ax, "ratio_ax": subplot_ax}
@@ -600,13 +523,21 @@ def stack_ratio_plot(hists, **kwargs):
     _data_hist = kwargs.pop("data_hist", None)
 
     # Setup and plot the ratio plot
-    ratio_plot_ylim = kwargs.pop("rp_ylim", None)
-    ratio_plot_ylabel = kwargs.pop("rp_ylabel", "Ratio")
+    ratio_plot_numerator = kwargs.pop("ratio_numerator", "data")
+    ratio_plot_kwargs = {
+        "ax_dict": ax_dict,
+        "rp_ylim": kwargs.pop("rp_ylim", None),
+        "rp_uncertainty_type": kwargs.pop("rp_uncertainty_type", "poisson"),
+        "rp_uncert_draw_type": kwargs.pop("rp_uncert_draw_type", "line"),
+    }
 
     num_hists = utils.sum_hists(hists)
-    _data_hist.plot_ratio(
-        num_hists, ax_dict=ax_dict, rp_ylim=ratio_plot_ylim, rp_ylabel=ratio_plot_ylabel
-    )
+    if ratio_plot_numerator.lower() in ["simulation", "sim", "mc"]:
+        ratio_plot_kwargs["rp_ylabel"] = kwargs.pop("rp_ylabel", "MC/Data")
+        num_hists.plot_ratio(_data_hist, **ratio_plot_kwargs)
+    else:
+        ratio_plot_kwargs["rp_ylabel"] = kwargs.pop("rp_ylabel", "Data/MC")
+        _data_hist.plot_ratio(num_hists, **ratio_plot_kwargs)
     subplot_ax.set_xlabel(kwargs.get("xlabel", None))
 
     # FIXME: Ugly hack to overwrite ratio plot main axis
@@ -630,46 +561,3 @@ def stack_ratio_plot(hists, **kwargs):
         main_ax.set_ylim(top=main_ax.get_ylim()[-1] * 100)
 
     return main_ax, subplot_ax
-
-
-def _stack_ratio_plot(hists, **kwargs):
-    """
-    Stack plot on top, ratio plot on bottom
-    """
-    _fig_width, _fig_height = get_style()["figure.figsize"]
-    # fig = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
-    # _ = plt.figure(figsize=(_fig_width, 1.5 * _fig_height))
-    _ = plt.figure(figsize=(_fig_width, 1.25 * _fig_height))
-    gs = gridspec.GridSpec(2, 1, height_ratios=[3.5, 1])
-    ax0 = plt.subplot(gs[0])
-    ax1 = plt.subplot(gs[1])
-    # fig, axs = plt.subplots(gs, figsize=(_fig_size[0], 2.2* _fig_size[1]))
-
-    labels = kwargs.pop("labels", None)
-    color = kwargs.pop("color", None)
-    if color is not None:
-        if len(color) != len(hists):
-            color = color[: len(hists)]
-    alpha = kwargs.pop("alpha", None)
-    semilogy = kwargs.pop("logy", True)
-    _data_hist = kwargs.pop("data_hist", None)
-    y_range = kwargs.pop("y_range", None)
-
-    ax0 = stack_hist(
-        hists,
-        labels=labels,
-        color=color,
-        alpha=alpha,
-        ylabel="Count",
-        logy=semilogy,
-        data_hist=_data_hist,
-        ax=ax0,
-    )
-    num_hists = utils.sum_hists(hists)
-    # Author protest: This decision in the field to compare data to simulation
-    # seems methodologically wrong
-    xlim = ax0.get_xlim()
-    ratio_plot(_data_hist, num_hists, ax=ax1, xlim=xlim, y_range=y_range)
-    ax0.figure.tight_layout()
-
-    return ax0, ax1
