@@ -495,3 +495,69 @@ def stack_hist(hists, ax=None, **kwargs):
     ax = draw_experiment_label(ax, max_height=max_hist, **kwargs)
 
     return _plot_ax_kwargs(ax, **kwargs)
+
+
+def stack_ratio_plot(hists, **kwargs):
+    """
+    Stack plot on top, ratio plot on bottom
+    """
+    fig = kwargs.pop("fig", plt.gcf())
+
+    # Scale figure height to deal with ratio subplot being added
+    fig_height_scale = kwargs.pop("fig_height_scale", 1.25)
+    _fig_width, _fig_height = get_style()["figure.figsize"]
+    fig.set_size_inches(_fig_width, _fig_height * fig_height_scale, forward=True)
+
+    # Setup figure subplot grid and axis dict for hist.plot_ratio
+    grid = fig.add_gridspec(2, 1, hspace=0, height_ratios=[3, 1])
+    main_ax = fig.add_subplot(grid[0])
+    subplot_ax = fig.add_subplot(grid[1], sharex=main_ax)
+    ax_dict = {"main_ax": main_ax, "ratio_ax": subplot_ax}
+
+    labels = kwargs.pop("labels", None)
+    color = kwargs.pop("color", None)
+    if color is not None and len(color) != len(hists):
+        color = color[: len(hists)]
+    alpha = kwargs.pop("alpha", None)
+    semilogy = kwargs.pop("logy", True)
+    _data_hist = kwargs.pop("data_hist", None)
+
+    # Setup and plot the ratio plot
+    ratio_plot_numerator = kwargs.pop("ratio_numerator", "data")
+    ratio_plot_kwargs = {
+        "ax_dict": ax_dict,
+        "rp_ylim": kwargs.pop("rp_ylim", None),
+        "rp_uncertainty_type": kwargs.pop("rp_uncertainty_type", "poisson"),
+        "rp_uncert_draw_type": kwargs.pop("rp_uncert_draw_type", "line"),
+    }
+
+    num_hists = utils.sum_hists(hists)
+    if ratio_plot_numerator.lower() in ["simulation", "sim", "mc"]:
+        ratio_plot_kwargs["rp_ylabel"] = kwargs.pop("rp_ylabel", "MC/Data")
+        num_hists.plot_ratio(_data_hist, **ratio_plot_kwargs)
+    else:
+        ratio_plot_kwargs["rp_ylabel"] = kwargs.pop("rp_ylabel", "Data/MC")
+        _data_hist.plot_ratio(num_hists, **ratio_plot_kwargs)
+    subplot_ax.set_xlabel(kwargs.get("xlabel", None))
+
+    # FIXME: Ugly hack to overwrite ratio plot main axis
+    main_ax.clear()
+    main_ax = stack_hist(
+        hists,
+        labels=labels,
+        color=color,
+        alpha=alpha,
+        logy=semilogy,
+        data_hist=_data_hist,
+        ax=main_ax,
+        **kwargs,
+    )
+
+    # Hide tick marks of main_ax
+    plt.setp(main_ax.get_xticklabels(), visible=False)
+    # Trying to get things looking okay
+    if semilogy and fig_height_scale < 1.25:
+        # Ensure enough space for legend
+        main_ax.set_ylim(top=main_ax.get_ylim()[-1] * 100)
+
+    return main_ax, subplot_ax
