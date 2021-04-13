@@ -61,10 +61,7 @@ def get_style(style=None):
     Returns:
         dict: The style dict requested
     """
-    if style is not None:
-        style = getattr(mplhep.style, style)
-    else:
-        style = dict(plt.rcParams)
+    style = dict(plt.rcParams) if style is None else getattr(mplhep.style, style)
     return style
 
 
