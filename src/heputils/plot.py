@@ -272,9 +272,9 @@ def _max_hist_height(hists, density, stacked=False):
         if stacked:
             max_hist = max(utils.sum_hists(hists).values())
         else:
-            max_hist = max([max(hist.values()) for hist in hists])
+            max_hist = max(max(hist.values()) for hist in hists)
     else:
-        max_hist = max([max(hist.density()) for hist in hists])
+        max_hist = max(max(hist.density()) for hist in hists)
     return max_hist
 
 
