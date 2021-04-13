@@ -61,10 +61,7 @@ def get_style(style=None):
     Returns:
         dict: The style dict requested
     """
-    if style is not None:
-        style = getattr(mplhep.style, style)
-    else:
-        style = dict(plt.rcParams)
+    style = dict(plt.rcParams) if style is None else getattr(mplhep.style, style)
     return style
 
 
@@ -275,9 +272,9 @@ def _max_hist_height(hists, density, stacked=False):
         if stacked:
             max_hist = max(utils.sum_hists(hists).values())
         else:
-            max_hist = max([max(hist.values()) for hist in hists])
+            max_hist = max(max(hist.values()) for hist in hists)
     else:
-        max_hist = max([max(hist.density()) for hist in hists])
+        max_hist = max(max(hist.density()) for hist in hists)
     return max_hist
 
 
@@ -373,19 +370,15 @@ def shape_hist(hists, ax=None, **kwargs):
 
     labels = kwargs.pop("labels", None)
     color = kwargs.pop("color", None)
-    if color is not None:
-        if len(color) != len(hists):
-            color = color[: len(hists)]
+    if color is not None and len(color) != len(hists):
+        color = color[: len(hists)]
     semilogy = kwargs.pop("logy", False)
     _data_hist = kwargs.pop("data_hist", None)
     data_uncert = kwargs.pop("data_uncert", None)
     data_label = kwargs.pop("data_label", "Data")
     density = kwargs.pop("density", True)
     histtype = kwargs.pop("histtype", "fill")
-    if histtype == "fill":
-        _default_alpha = 0.1
-    else:
-        _default_alpha = None
+    _default_alpha = 0.1 if histtype == "fill" else None
     alpha = kwargs.pop("alpha", _default_alpha)
 
     if ax is None:
@@ -447,9 +440,8 @@ def stack_hist(hists, ax=None, **kwargs):
     scale_factors = kwargs.pop("scale_factors", None)
     labels = kwargs.pop("labels", None)
     color = kwargs.pop("color", None)
-    if color is not None:
-        if len(color) != len(hists):
-            color = color[: len(hists)]
+    if color is not None and len(color) != len(hists):
+        color = color[: len(hists)]
     alpha = kwargs.pop("alpha", None)
     semilogy = kwargs.pop("logy", True)
     _data_hist = kwargs.pop("data_hist", None)
