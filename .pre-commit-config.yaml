@@ -42,4 +42,4 @@ repos:
     - id: nbqa-black
       additional_dependencies: [black==21.4b0]
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.11.0]
+      additional_dependencies: [pyupgrade==2.13.0]
