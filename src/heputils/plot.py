@@ -7,7 +7,7 @@ import mplhep
 import numpy as np
 from mplhep import histplot
 
-from . import utils
+from heputils import utils
 
 # To be able to reset
 _experiment_label_info_defaults = {
