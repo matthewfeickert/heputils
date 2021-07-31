@@ -20,31 +20,31 @@ repos:
     - id: trailing-whitespace
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v2.20.0
+    rev: v2.23.1
     hooks:
     - id: pyupgrade
 
 -   repo: https://github.com/pycqa/isort
-    rev: 5.9.1
+    rev: 5.9.3
     hooks:
     - id: isort
+
+-   repo: https://github.com/psf/black
+    rev: 21.7b0
+    hooks:
+    - id: black
 
 -   repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
     - id: flake8
 
--   repo: https://github.com/psf/black
-    rev: 21.6b0
-    hooks:
-    - id: black
-
 -   repo: https://github.com/nbQA-dev/nbQA
-    rev: 0.13.1
+    rev: 1.0.0
     hooks:
     - id: nbqa-pyupgrade
-      additional_dependencies: [pyupgrade==2.20.0]
+      additional_dependencies: [pyupgrade==2.23.1]
     - id: nbqa-isort
-      additional_dependencies: [isort==5.9.1]
+      additional_dependencies: [isort==5.9.3]
     - id: nbqa-black
-      additional_dependencies: [black==21.6b0]
+      additional_dependencies: [black==21.7b0]
