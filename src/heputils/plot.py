@@ -36,10 +36,27 @@ def set_style(style):
     Args:
         style (str or `mplhep.style` dict): The experiment style
     """
-    mplhep.set_style(style)
+    mplhep.style.use(style)
     set_experiment_info(reset=True)
     if isinstance(style, str):
         set_experiment_info(name=style.lower())
+
+
+def use(style):
+    """
+    Alias for ``heputils.plot.set_style`` to match ``mplhep``'s API.
+
+    Example:
+
+        >>> import heputils
+        >>> import mplhep
+        >>> heputils.plot.use("ATLAS")
+        >>> heputils.plot.use(mplhep.style.CMS)
+
+    Args:
+        style (str or ``mplhep.style`` dict): The experiment style
+    """
+    set_style(style)
 
 
 def get_style(style=None):
