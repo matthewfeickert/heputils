@@ -48,3 +48,44 @@ def test_data_hist_xlabel_passed_through_ax(hist_tuple):
     assert ax.get_xlabel() == "test_label"
     ax = heputils.plot.data_hist(hist_3, ax=ax)
     assert ax.get_xlabel() == "test_label"
+
+
+def test_shape_hist_xlabel_passed_through_ax(hist_tuple):
+    np.random.seed(0)
+    heputils.plot.set_style("ATLAS")
+
+    hists = list(hist_tuple[:2])
+    hist_3 = hist_tuple[-1]
+
+    fig, ax = plt.subplots()
+    ax = heputils.plot.stack_hist(
+        hists,
+        xlabel="test_label",
+        ylabel="Count",
+        ax=ax,
+    )
+    assert ax.get_xlabel() == "test_label"
+    ax = heputils.plot.shape_hist(hist_3, ax=ax)
+    assert ax.get_xlabel() == "test_label"
+
+
+def test_stack_hist_xlabel_passed_through_ax(hist_tuple):
+    np.random.seed(0)
+    heputils.plot.set_style("ATLAS")
+
+    hists = list(hist_tuple[:2])
+    hist_3 = hist_tuple[-1]
+
+    fig, ax = plt.subplots()
+    ax = heputils.plot.data_hist(
+        hist_3,
+        xlabel="test_label",
+        ylabel="Count",
+        ax=ax,
+    )
+    assert ax.get_xlabel() == "test_label"
+    ax = heputils.plot.stack_hist(
+        hists,
+        ax=ax,
+    )
+    assert ax.get_xlabel() == "test_label"
