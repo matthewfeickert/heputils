@@ -348,6 +348,7 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
 
     # get all the kwargs
     if ax and not kwargs.get("xlabel"):
+        # Set from ax to avoid having hist.ax[0].label overwrite in histoplot
         kwargs["xlabel"] = ax.get_xlabel()
     color = kwargs.pop("color", "black")
     label = kwargs.pop("label", "Data")
