@@ -53,7 +53,7 @@ jobs:
       run: twine check dist/*
 
     - name: List contents of sdist
-      run: tar --list --file dist/pyhf-*.tar.gz
+      run: tar --list --file dist/heputils-*.tar.gz
 
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on main, so check the push event is actually coming from main
