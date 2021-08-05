@@ -1,6 +1,4 @@
 import hist
-
-# from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
 from hist import Hist
