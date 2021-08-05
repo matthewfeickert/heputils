@@ -1,10 +1,13 @@
 import hist
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from hist import Hist
 
 import heputils
+
+matplotlib.use("agg")
 
 
 @pytest.fixture
