@@ -4,9 +4,8 @@ graft src
 include setup.py
 include setup.cfg
 include LICENSE
-include README.rst
+include README.md
 include pyproject.toml
 include MANIFEST.in
-include AUTHORS
 
 global-exclude __pycache__ *.py[cod]
