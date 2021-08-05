@@ -5,11 +5,10 @@ from hist import Hist
 
 import heputils
 
-heputils.plot.set_style("ATLAS")
-
 
 def test_xlabel_passed_through_ax():
     np.random.seed(0)
+    heputils.plot.set_style("ATLAS")
 
     hist_1 = Hist(
         hist.axis.Regular(
