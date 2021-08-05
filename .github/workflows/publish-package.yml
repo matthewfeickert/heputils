@@ -36,7 +36,7 @@ jobs:
 
     - name: Build a wheel and a sdist
       run: |
-        python -m build --sdist --wheel --outdir dist/ .
+        python -m build --outdir dist/ .
 
     - name: Verify history available for dev versions
       run: |
@@ -51,6 +51,9 @@ jobs:
 
     - name: Verify the distribution
       run: twine check dist/*
+
+    - name: List contents of sdist
+      run: tar --list --file dist/pyhf-*.tar.gz
 
     - name: Publish distribution 📦 to Test PyPI
       # every PR will trigger a push event on main, so check the push event is actually coming from main
