@@ -345,11 +345,11 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         uncert = np.sqrt(hist.values())
     if ax is None:
         ax = plt.gca()
-
-    # get all the kwargs
-    if ax and not kwargs.get("xlabel"):
+    elif not kwargs.get("xlabel"):
         # Set from ax to avoid having hist.ax[0].label overwrite in histoplot
         kwargs["xlabel"] = ax.get_xlabel()
+
+    # get all the kwargs
     color = kwargs.pop("color", "black")
     label = kwargs.pop("label", "Data")
     density = kwargs.pop("density", False)
@@ -403,6 +403,9 @@ def shape_hist(hists, ax=None, **kwargs):
 
     if ax is None:
         ax = plt.gca()
+    elif not kwargs.get("xlabel"):
+        # Set from ax to avoid having hists[0].ax[0].label overwrite in histoplot
+        kwargs["xlabel"] = ax.get_xlabel()
 
     histplot(
         hists,
@@ -470,6 +473,9 @@ def stack_hist(hists, ax=None, **kwargs):
 
     if ax is None:
         ax = plt.gca()
+    elif not kwargs.get("xlabel"):
+        # Set from ax to avoid having hists[0].ax[0].label overwrite in histoplot
+        kwargs["xlabel"] = ax.get_xlabel()
 
     if all(v is not None for v in [labels, scale_factors]):
         labels = [
