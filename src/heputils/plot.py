@@ -549,7 +549,14 @@ def stack_ratio_plot(hists, **kwargs):
         "rp_uncert_draw_type": kwargs.pop("rp_uncert_draw_type", "line"),
     }
 
-    num_hists = utils.sum_hists(hists)
+    # .get not .pop to pass scale_factors through to stack_hist too
+    scale_factors = kwargs.get("scale_factors", None)
+    num_hists = (
+        utils.sum_hists(hists)
+        if scale_factors is None
+        else utils.sum_hists([h * sf for h, sf in zip(hists, scale_factors)])
+    )
+
     if ratio_plot_numerator.lower() in ["simulation", "sim", "mc"]:
         ratio_plot_kwargs["rp_ylabel"] = kwargs.pop("rp_ylabel", "MC/Data")
         num_hists.plot_ratio(_data_hist, **ratio_plot_kwargs)
