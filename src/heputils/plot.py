@@ -347,6 +347,8 @@ def data_hist(hist, uncert=None, ax=None, **kwargs):
         ax = plt.gca()
 
     # get all the kwargs
+    if ax and not kwargs.get("xlabel"):
+        kwargs["xlabel"] = ax.get_xlabel()
     color = kwargs.pop("color", "black")
     label = kwargs.pop("label", "Data")
     density = kwargs.pop("density", False)
