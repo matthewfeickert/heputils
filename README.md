@@ -5,7 +5,7 @@
 [![Code Coverage](https://codecov.io/gh/matthewfeickert/heputils/graph/badge.svg?branch=main)](https://codecov.io/gh/matthewfeickert/heputils?branch=main)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/matthewfeickert/heputils/main.svg)](https://results.pre-commit.ci/latest/github/matthewfeickert/heputils/main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/matthewfeickert/heputils/HEAD?urlpath=lab/tree/examples/dev-example.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/matthewfeickert/heputils/HEAD?filepath=examples/dev-example.ipynb)
 
 [![PyPI version](https://badge.fury.io/py/heputils.svg)](https://badge.fury.io/py/heputils)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/heputils.svg)](https://pypi.org/project/heputils/)
