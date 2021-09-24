@@ -19,6 +19,7 @@ def sum_hists(hists):
         >>> h2.fill(np.random.normal(loc=6, scale=2, size=100))
         Hist(Regular(10, 0, 10, label='Axis 0'), storage=Double()) # Sum: 98.0 (100.0 with flow)
         >>> stack_hist = utils.sum_hists([h1, h2])
+
         >>> print(stack_hist)
                        ┌─────────────────────────────────────────────────────────────┐
         [-inf,   0) 0  │                                                             │
